@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI职业方向测试</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            background: #f7fafc;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        @media (min-width: 768px) {
+            .options {
+                flex-direction: row;
+            }
+        }
+        .option {
+            padding: 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .option:hover {
+            background-color: #f7fafc;
+            border-color: #4c8bf5;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 30px;
+            background: #4c8bf5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+        .result {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+        .type {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4c8bf5;
+            margin: 20px 0;
+        }
+        .career-tip {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>发现你的职业天赋</h1>
+        <p class="description">基于 MBTI 人格理论的职业方向测试</p >
+        
+        <div id="quiz">
+            <div id="question-container" class="question">
+                <div id="question-text"></div>
+                <div class="options" id="options-container"></div>
+            </div>
+            <button id="next-btn" disabled>下一题</button>
+        </div>
+
+        <div id="result" class="result">
+            <h2>测试完成！</h2>
+            <div id="result-type" class="type"></div>
+            <div id="career-tip" class="career-tip"></div>
+            <button id="restart-btn">重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        // 测试数据
+        const questions = [
+            {
+                text: "面对选择时，你更倾向于...",
+                options: [
+                    { text: "依靠直觉和灵感", type: "N" },
+                    { text: "依靠经验和事实", type: "S" }
+                ]
+            },
+            {
+                text: "社交活动后，你通常会...",
+                options: [
+                    { text: "感到精力充沛", type: "E" },
+                    { text: "需要独处恢复能量", type: "I" }
+                ]
+            },
+            {
+                text: "做决定时，你更看重...",
+                options: [
+                    { text: "逻辑和客观标准", type: "T" },
+                    { text: "人情和价值观", type: "F" }
+                ]
+            },
+            {
+                text: "你的日常生活...",
+                options: [
+                    { text: "有计划、有条理", type: "J" },
+                    { text: "随性、灵活", type: "P" }
+                ]
+            }
+        ];
+
+        // 职业建议
+        const careerMap = {
+            "INTJ": "战略家型。适合职业：科学家、架构师、数据分析师、策划总监。",
+            "INTP": "逻辑学家型。适合职业：程序员、研究员、金融分析师、工程师。",
+            "ENTJ": "指挥官型。适合职业：企业高管、项目经理、律师、创业者。",
+            "ENTP": "辩论家型。适合职业：产品经理、市场营销、咨询顾问、发明家。",
+            "INFJ": "提倡者型。适合职业：心理咨询师、作家、社会工作者、人力资源。",
+            "INFP": "调停者型。适合职业：设计师、编辑、艺术家、非营利组织工作者。",
+            "ENFJ": "主人公型。适合职业：教师、培训师、公关经理、团队领导。",
+            "ENFP": "竞选者型。适合职业：记者、销售、活动策划、演员。",
+            "ISTJ": "物流师型。适合职业：会计师、审计师、行政人员、医生。",
+            "ISFJ": "守卫者型。适合职业：护士、客服、图书管理员、后勤管理。",
+            "ESTJ": "管理者型。适合职业：运营总监、警察、质检员、银行职员。",
+            "ESFJ": "执政官型。适合职业：前台、销售代表、社区工作者、服务员。",
+            "ISTP": "鉴赏家型。适合职业：机械师、外科医生、飞行员、IT技术支持。",
+            "ISFP": "表演者型。适合职业：美容师、厨师、摄影师、运动员。",
+            "ESTP": "企业家型。适合职业：采购、谈判专家、急救人员、股票交易员。",
+            "ESFP": "表演者型。适合职业：演员、导游、公关专员、幼教老师。"
+        };
+
+        // 逻辑代码
+        let currentQuestion = 0;
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+        const questionContainer = document.getElementById('question-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const resultContainer = document.getElementById('result');
+        const resultType = document.getElementById('result-type');
+        const careerTip = document.getElementById('career-tip');
+        const restartBtn = document.getElementById('restart-btn');
+
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResult();
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            questionText.textContent = q.text;
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = option.text;
+                btn.onclick = () => selectOption(btn, option.type);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(button, type) {
+            // 简单的计分逻辑
+            scores[type]++;
+            
+            // 禁用所有选项按钮
+            document.querySelectorAll('.option').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+            });
+            
+            nextBtn.disabled = false;
+        }
+
+        function showResult() {
+            const EI = scores.E > scores.I ? 'E' : 'I';
+            const SN = scores.S > scores.N ? 'S' : 'N';
+            const TF = scores.T > scores.F ? 'T' : 'F';
+            const JP = scores.J > scores.P ? 'J' : 'P';
+            
+            const type = EI + SN + TF + JP;
+            const description = careerMap[type] || "暂无描述";
+
+            resultType.textContent = `你的 MBTI 类型: ${type}`;
+            careerTip.textContent = description;
+
+            questionContainer.style.display = 'none';
+            nextBtn.style.display = 'none';
+            resultContainer.style.display = 'block';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestion++;
+            loadQuestion();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            currentQuestion = 0;
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            questionContainer.style.display = 'block';
+            nextBtn.style.display = 'block';
+            resultContainer.style.display = 'none';
+            nextBtn.disabled = true;
+            loadQuestion();
+        });
+
+        // 初始化
+        loadQuestion();
+    </script>
+</body>
+</html>
