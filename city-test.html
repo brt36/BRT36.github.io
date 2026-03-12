@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市适配度心理测试 | 找到属于你的理想城市</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        /* 测试区域样式 */
+        .test-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .test-container.active {
+            display: block;
+        }
+
+        .question-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .question-progress {
+            color: #95a5a6;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-item:hover {
+            border-color: #3498db;
+            background-color: #f8fbfe;
+        }
+
+        .option-item.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-disabled {
+            background-color: #bdc3c7;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        /* 结果区域样式 */
+        .result-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 40px;
+            display: none;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .result-type {
+            font-size: 22px;
+            color: #3498db;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .result-desc {
+            line-height: 1.8;
+            font-size: 16px;
+            color: #34495e;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .result-reason {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .result-reason h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .restart-btn {
+            display: block;
+            margin: 30px auto 0;
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .restart-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* 开始页面样式 */
+        .start-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 50px;
+            text-align: center;
+        }
+
+        .start-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #3498db;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .test-container, .result-container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .question-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 开始页面 -->
+        <div class="header">
+            <h1>城市适配度心理测试</h1>
+            <p>基于你的性格与偏好，找到最适合你的生活城市</p>
+        </div>
+
+        <div class="start-container" id="startPage">
+            <h2>准备开始测试</h2>
+            <p>本测试包含20道选择题，每题有4个选项，请根据你的真实偏好选择</p>
+            <p>测试结果将为你推荐最适配的城市，并说明具体原因</p>
+            <button class="btn start-btn" id="startBtn">开始测试</button>
+        </div>
+
+        <!-- 测试区域 -->
+        <div class="test-container" id="testPage">
+            <div class="question-progress" id="progressText">第1题 / 共20题</div>
+            <div class="question-title" id="questionText">加载中...</div>
+            <div class="options" id="optionsList">
+                <!-- 选项将通过JS动态生成 -->
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-primary btn-disabled" id="prevBtn" disabled>上一题</button>
+                <button class="btn btn-primary" id="nextBtn">下一题</button>
+            </div>
+        </div>
+
+        <!-- 结果区域 -->
+        <div class="result-container" id="resultPage">
+            <div class="result-title">你的城市适配结果</div>
+            <div class="result-type" id="resultType"></div>
+            <div class="result-desc" id="resultDesc"></div>
+            <div class="result-reason">
+                <h3>适配原因分析</h3>
+                <p id="resultReason"></p>
+            </div>
+            <button class="btn restart-btn" id="restartBtn">重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. 测试题目数据（20题，每题4选项，选项对应不同维度得分）
+        // 维度说明：
+        // A: 快节奏/都市化  B: 慢节奏/自然化  C: 文化底蕴/传统型  D: 多元包容/新潮型
+        const questions = [
+            {
+                id: 1,
+                text: "周末你更愿意选择哪种休闲方式？",
+                options: [
+                    { text: "逛商圈、看展览、参加城市活动", score: {A:2, B:0, C:1, D:2} },
+                    { text: "去郊外徒步、露营、亲近自然", score: {A:0, B:2, C:1, D:0} },
+                    { text: "逛博物馆、古城、体验传统文化", score: {A:1, B:1, C:2, D:0} },
+                    { text: "去创意园区、小众咖啡馆、尝试新事物", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 2,
+                text: "你对工作节奏的偏好是？",
+                options: [
+                    { text: "高效紧凑，有明确的晋升空间", score: {A:2, B:0, C:1, D:1} },
+                    { text: "轻松自在，能兼顾生活与工作", score: {A:0, B:2, C:1, D:0} },
+                    { text: "稳定规律，有完善的保障体系", score: {A:1, B:1, C:2, D:0} },
+                    { text: "灵活多元，能接触不同领域的机会", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 3,
+                text: "你理想中的居住环境是？",
+                options: [
+                    { text: "市中心高层公寓，交通便利", score: {A:2, B:0, C:1, D:1} },
+                    { text: "郊区带小院的房子，贴近自然", score: {A:0, B:2, C:1, D:0} },
+                    { text: "老城区的四合院/老洋房，有历史感", score: {A:1, B:1, C:2, D:0} },
+                    { text: "文创区的loft，设计感强", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 4,
+                text: "你对饮食的偏好是？",
+                options: [
+                    { text: "国际化料理，网红餐厅", score: {A:2, B:0, C:0, D:2} },
+                    { text: "本地农家菜，新鲜原生态", score: {A:0, B:2, C:1, D:0} },
+                    { text: "老字号特色菜，有历史传承", score: {A:1, B:1, C:2, D:0} },
+                    { text: "融合创新菜，小众特色店", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 5,
+                text: "你社交的频率偏好是？",
+                options: [
+                    { text: "频繁社交，认识不同的人", score: {A:2, B:0, C:0, D:2} },
+                    { text: "很少社交，喜欢独处安静", score: {A:0, B:2, C:1, D:0} },
+                    { text: "定期和老友小聚，稳定的社交圈", score: {A:1, B:1, C:2, D:0} },
+                    { text: "随机社交，遇到投缘的人就聊", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 6,
+                text: "你对城市交通的要求是？",
+                options: [
+                    { text: "地铁覆盖广，通勤效率高", score: {A:2, B:0, C:1, D:1} },
+                    { text: "不堵车，出行以自行车/步行为主", score: {A:0, B:2, C:1, D:0} },
+                    { text: "有特色交通方式（如胡同三轮车）", score: {A:1, B:1, C:2, D:0} },
+                    { text: "共享交通发达，出行方式灵活", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 7,
+                text: "你对城市文化的偏好是？",
+                options: [
+                    { text: "现代化的艺术场馆，国际展会多", score: {A:2, B:0, C:0, D:2} },
+                    { text: "自然景观丰富，户外文化浓厚", score: {A:0, B:2, C:1, D:0} },
+                    { text: "历史古迹多，传统文化活动丰富", score: {A:1, B:1, C:2, D:0} },
+                    { text: "小众文化活跃，创意市集多", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 8,
+                text: "你对购物的偏好是？",
+                options: [
+                    { text: "大型购物中心，品牌齐全", score: {A:2, B:0, C:1, D:1} },
+                    { text: "农贸市场，本地特产丰富", score: {A:0, B:2, C:1, D:0} },
+                    { text: "老字号商业街，有特色手工艺品", score: {A:1, B:1, C:2, D:0} },
+                    { text: "买手店、文创小店，独特小众", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 9,
+                text: "你对城市规模的偏好是？",
+                options: [
+                    { text: "超一线城市，资源丰富机会多", score: {A:2, B:0, C:1, D:1} },
+                    { text: "小城镇/乡村，生活安逸", score: {A:0, B:2, C:1, D:0} },
+                    { text: "历史文化名城，中等规模", score: {A:1, B:1, C:2, D:0} },
+                    { text: "新一线城市，发展快有活力", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 10,
+                text: "你选择工作的首要因素是？",
+                options: [
+                    { text: "薪资高，职业发展空间大", score: {A:2, B:0, C:1, D:1} },
+                    { text: "工作压力小，有更多休息时间", score: {A:0, B:2, C:1, D:0} },
+                    { text: "工作稳定，福利保障完善", score: {A:1, B:1, C:2, D:0} },
+                    { text: "工作内容有趣，能接触新事物", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 11,
+                text: "你喜欢的夜生活方式是？",
+                options: [
+                    { text: "酒吧、夜店、城市夜景打卡", score: {A:2, B:0, C:0, D:2} },
+                    { text: "在家休息，看星星听虫鸣", score: {A:0, B:2, C:1, D:0} },
+                    { text: "夜游古城、听戏曲、逛夜市", score: {A:1, B:1, C:2, D:0} },
+                    { text: "Livehouse、小众影院、深夜咖啡馆", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 12,
+                text: "你对教育医疗资源的要求是？",
+                options: [
+                    { text: "顶级的三甲医院和名校", score: {A:2, B:0, C:1, D:1} },
+                    { text: "基础医疗教育即可，不用顶尖", score: {A:0, B:2, C:1, D:0} },
+                    { text: "有特色的传统文化教育资源", score: {A:1, B:1, C:2, D:0} },
+                    { text: "国际化的教育资源，多元医疗选择", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 13,
+                text: "你对城市气候的偏好是？",
+                options: [
+                    { text: "气候多样，四季分明的大都市", score: {A:2, B:0, C:1, D:1} },
+                    { text: "气候宜人，靠近山水的自然环境", score: {A:0, B:2, C:1, D:0} },
+                    { text: "有历史气候特征的古都", score: {A:1, B:1, C:2, D:0} },
+                    { text: "气候舒适，包容性强的新都市", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 14,
+                text: "你对城市建筑风格的偏好是？",
+                options: [
+                    { text: "现代摩天大楼，科技感强", score: {A:2, B:0, C:0, D:2} },
+                    { text: "田园风格建筑，贴近自然", score: {A:0, B:2, C:1, D:0} },
+                    { text: "古建筑/仿古建筑，有文化底蕴", score: {A:1, B:1, C:2, D:0} },
+                    { text: "创意建筑，设计感独特", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 15,
+                text: "你更愿意为哪种生活成本买单？",
+                options: [
+                    { text: "高房租高消费，换取更多机会", score: {A:2, B:0, C:1, D:1} },
+                    { text: "低消费低房租，生活压力小", score: {A:0, B:2, C:1, D:0} },
+                    { text: "中等消费，为文化体验买单", score: {A:1, B:1, C:2, D:0} },
+                    { text: "为创意体验/小众消费买单", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 16,
+                text: "你参加的活动类型偏好是？",
+                options: [
+                    { text: "商业论坛、行业峰会、大型演唱会", score: {A:2, B:0, C:0, D:2} },
+                    { text: "户外徒步、登山、露营活动", score: {A:0, B:2, C:1, D:0} },
+                    { text: "传统文化节、书法绘画展、非遗体验", score: {A:1, B:1, C:2, D:0} },
+                    { text: "独立音乐节、小众艺术展、创客活动", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 17,
+                text: "你对邻居的期望是？",
+                options: [
+                    { text: "各行各业的精英，能拓展人脉", score: {A:2, B:0, C:1, D:1} },
+                    { text: "淳朴的本地人，邻里关系简单", score: {A:0, B:2, C:1, D:0} },
+                    { text: "有文化底蕴的长者，能交流传统", score: {A:1, B:1, C:2, D:0} },
+                    { text: "多元背景的年轻人，思想开放", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 18,
+                text: "你对城市发展的期待是？",
+                options: [
+                    { text: "经济快速发展，国际化程度高", score: {A:2, B:0, C:0, D:2} },
+                    { text: "保持原生态，不追求过度开发", score: {A:0, B:2, C:1, D:0} },
+                    { text: "保护历史文化，适度发展", score: {A:1, B:1, C:2, D:0} },
+                    { text: "创新驱动发展，包容多元文化", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 19,
+                text: "你周末出行的范围偏好是？",
+                options: [
+                    { text: "全城范围，探索不同商圈和景点", score: {A:2, B:0, C:1, D:1} },
+                    { text: "周边乡村/自然景区，远离城市", score: {A:0, B:2, C:1, D:0} },
+                    { text: "城市历史街区，深度体验文化", score: {A:1, B:1, C:2, D:0} },
+                    { text: "城市新兴区域，发现新打卡点", score: {A:1, B:0, C:0, D:2} }
+                ]
+            },
+            {
+                id: 20,
+                text: "你定义的“幸福生活”是？",
+                options: [
+                    { text: "事业成功，拥有丰富的物质生活", score: {A:2, B:0, C:1, D:1} },
+                    { text: "身心放松，与自然和谐相处", score: {A:0, B:2, C:1, D:0} },
+                    { text: "精神富足，有深厚的文化归属感", score: {A:1, B:1, C:2, D:0} },
+                    { text: "自由多元，能不断尝试新事物", score: {A:1, B:0, C:0, D:2} }
+                ]
+            }
+        ];
+
+        // 2. 城市类型配置（根据四个维度得分匹配）
+        const cityTypes = [
+            {
+                type: "活力都市型",
+                cities: "上海、深圳、广州",
+                desc: "你是一个追求高效、热爱挑战、喜欢多元生活的人，充满活力的一线大都市最适合你。这些城市拥有最前沿的商业资源、丰富的职业机会和国际化的生活方式，能够满足你对事业发展和多元体验的双重需求。",
+                reason: "从你的选择可以看出，你更偏好快节奏的生活方式，重视职业发展机会和多元的社交体验，对现代化的城市设施和国际化的生活氛围有较高要求。上海、深圳、广州等城市具备完善的商业体系、顶尖的就业机会和开放的城市文化，能够匹配你对高效、多元、充满挑战的生活追求，让你在实现事业目标的同时，也能体验到丰富的都市生活。"
+            },
+            {
+                type: "慢活自然型",
+                cities: "大理、丽江、桂林、舟山",
+                desc: "你向往宁静、自然、慢节奏的生活，远离喧嚣的自然型城市是你的理想选择。这些城市拥有优美的自然景观、舒缓的生活节奏，能够让你在与自然的相处中找到内心的平静，享受简单而美好的生活。",
+                reason: "你的选择体现了对慢节奏生活的向往，更重视生活与自然的和谐，不追求高强度的工作和社交，而是希望获得身心的放松。大理、丽江等城市以自然景观为核心，生活节奏缓慢，人际关系简单，能够满足你对宁静、舒适生活的需求，让你摆脱都市的压力，享受与自然为伴的惬意生活。"
+            },
+            {
+                type: "文化底蕴型",
+                cities: "北京、西安、南京、苏州",
+                desc: "你是一个注重精神富足、热爱传统文化的人，拥有深厚历史底蕴的文化名城最适合你。这些城市沉淀了数千年的历史文化，有丰富的古迹、传统艺术和人文氛围，能够满足你对精神世界和文化归属感的追求。",
+                reason: "从你的答题倾向可以看出，你对历史文化有浓厚兴趣，偏好稳定且有文化内涵的生活方式，重视精神层面的满足感。北京、西安等城市作为历史文化名城，拥有大量的历史古迹、传统文化活动和深厚的人文底蕴，能够为你提供丰富的文化体验，让你在日常生活中感受到历史的厚重感，满足你对精神富足和文化归属感的需求。"
+            },
+            {
+                type: "平衡宜居型",
+                cities: "成都、杭州、重庆、厦门",
+                desc: "你追求生活与事业的平衡，既想要一定的发展机会，又不愿牺牲生活品质，兼具活力与舒适的新一线城市最适合你。这些城市既有不错的职业发展空间，又有舒适的生活节奏和独特的城市魅力。",
+                reason: "你的选择展现了对平衡生活的追求，既不满足于过于缓慢的生活节奏，也不愿承受一线城市的高压，希望在事业发展和生活品质之间找到平衡点。成都、杭州等新一线城市兼顾了经济发展和生活舒适度，既有多元化的就业机会，又有宜人的生活环境和包容的城市文化，能够让你在实现职业目标的同时，也能享受美食、休闲等生活乐趣，达到事业与生活的平衡。"
+            }
+        ];
+
+        // 3. 全局变量
+        let currentQuestionIndex = 0; // 当前题目索引
+        let selectedScores = {A:0, B:0, C:0, D:0}; // 各维度总得分
+        let selectedOptionIndex = -1; // 当前选中的选项索引
+
+        // 4. DOM元素
+        const startPage = document.getElementById('startPage');
+        const testPage = document.getElementById('testPage');
+        const resultPage = document.getElementById('resultPage');
+        const startBtn = document.getElementById('startBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const progressText = document.getElementById('progressText');
+        const questionText = document.getElementById('questionText');
+        const optionsList = document.getElementById('optionsList');
+        const resultType = document.getElementById('resultType');
+        const resultDesc = document.getElementById('resultDesc');
+        const resultReason = document.getElementById('resultReason');
+
+        // 5. 初始化题目
+        function initQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            // 更新进度文本
+            progressText.textContent = `第${currentQuestionIndex + 1}题 / 共20题`;
+            // 更新题目文本
+            questionText.textContent = currentQuestion.text;
+            // 清空选项列表
+            optionsList.innerHTML = '';
+            // 重置选中状态
+            selectedOptionIndex = -1;
+
+            // 生成选项
+            currentQuestion.options.forEach((option, index) => {
+                const optionItem = document.createElement('div');
+                optionItem.className = 'option-item';
+                optionItem.textContent = option.text;
+                optionItem.addEventListener('click', () => {
+                    // 移除其他选项的选中状态
+                    document.querySelectorAll('.option-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    // 添加当前选项选中状态
+                    optionItem.classList.add('selected');
+                    selectedOptionIndex = index;
+                });
+                optionsList.appendChild(optionItem);
+            });
+
+            // 更新按钮状态
+            updateNavButtons();
+        }
+
+        // 6. 更新导航按钮状态
+        function updateNavButtons() {
+            // 上一题按钮
+            if (currentQuestionIndex === 0) {
+                prevBtn.disabled = true;
+                prevBtn.classList.add('btn-disabled');
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('btn-disabled');
+            }
+
+            // 下一题按钮（最后一题显示为"提交"）
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = '提交测试';
+            } else {
+                nextBtn.textContent = '下一题';
+            }
+        }
+
+        // 7. 计算最终得分并匹配城市类型
+        function calculateResult() {
+            // 计算各维度总分
+            let maxScore = 0;
+            let maxDimension = '';
+            
+            // 找出得分最高的维度
+            for (const [dimension, score] of Object.entries(selectedScores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    maxDimension = dimension;
+                }
+            }
+
+            // 匹配城市类型
+            let matchedCityType = {};
+            switch(maxDimension) {
+                case 'A':
+                    matchedCityType = cityTypes[0]; // 活力都市型
+                    break;
+                case 'B':
+                    matchedCityType = cityTypes[1]; // 慢活自然型
+                    break;
+                case 'C':
+                    matchedCityType = cityTypes[2]; // 文化底蕴型
+                    break;
+                case 'D':
+                    matchedCityType = cityTypes[3]; // 平衡宜居型
+                    break;
+                default:
+                    matchedCityType = cityTypes[3]; // 默认平衡宜居型
+            }
+
+            // 显示结果
+            resultType.textContent = `${matchedCityType.type}：${matchedCityType.cities}`;
+            resultDesc.textContent = matchedCityType.desc;
+            resultReason.textContent = matchedCityType.reason;
+        }
+
+        // 8. 事件监听
+        // 开始测试
+        startBtn.addEventListener('click', () => {
+            startPage.style.display = 'none';
+            testPage.classList.add('active');
+            initQuestion();
+        });
+
+        // 上一题
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                // 保存当前题目的得分（如果有选择）
+                if (selectedOptionIndex !== -1) {
+                    const currentQuestion = questions[currentQuestionIndex];
+                    const selectedScore = currentQuestion.options[selectedOptionIndex].score;
+                    // 减去当前题目的得分（因为要回退）
+                    for (const [dimension, score] of Object.entries(selectedScore)) {
+                        selectedScores[dimension] -= score;
+                    }
+                }
+
+                currentQuestionIndex--;
+                initQuestion();
+            }
+        });
+
+        // 下一题/提交
+        nextBtn.addEventListener('click', () => {
+            // 必须选择选项才能继续
+            if (selectedOptionIndex === -1) {
+                alert('请选择一个选项后继续');
+                return;
+            }
+
+            // 保存当前题目的得分
+            const currentQuestion = questions[currentQuestionIndex];
+            const selectedScore = currentQuestion.options[selectedOptionIndex].score;
+            for (const [dimension, score] of Object.entries(selectedScore)) {
+                selectedScores[dimension] += score;
+            }
+
+            // 判断是否是最后一题
+            if (currentQuestionIndex === questions.length - 1) {
+                // 提交测试，显示结果
+                testPage.classList.remove('active');
+                resultPage.classList.add('active');
+                calculateResult();
+            } else {
+                // 进入下一题
+                currentQuestionIndex++;
+                initQuestion();
+            }
+        });
+
+        // 重新测试
+        restartBtn.addEventListener('click', () => {
+            // 重置全局变量
+            currentQuestionIndex = 0;
+            selectedScores = {A:0, B:0, C:0, D:0};
+            selectedOptionIndex = -1;
+
+            // 隐藏结果页，显示开始页
+            resultPage.classList.remove('active');
+            startPage.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
