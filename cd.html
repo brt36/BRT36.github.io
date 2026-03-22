@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>命理姻缘深度测试 | Destiny Partner Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #d4af37;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: #0f0c29;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .font-calligraphy { font-family: 'Ma Shan Zheng', cursive; }
+        .font-classic { font-family: 'ZCOOL XiaoWei', serif; }
+        
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .star-field {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 5s ease-in-out infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        
+        .floating-lantern {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(255,200,100,0.8) 0%, rgba(255,100,50,0.4) 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            box-shadow: 0 0 30px rgba(255,150,50,0.6);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .floating-lantern::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 15px;
+            background: #8b4513;
+            border-radius: 3px;
+        }
+        
+        .floating-lantern::after {
+            content: '姻缘';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            color: rgba(139, 69, 19, 0.8);
+            writing-mode: vertical-rl;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(-5deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(5deg); opacity: 0; }
+        }
+        
+        .destiny-wheel {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 60s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .option-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.6);
+            transform: translateX(5px);
+        }
+        
+        .option-btn.selected {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #d4af37 0%, #f472b6 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .wuxing-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .wuxing-wood { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; }
+        .wuxing-fire { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+        .wuxing-earth { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: white; }
+        .wuxing-metal { background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%); color: #374151; }
+        .wuxing-water { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        .destiny-btn {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(180, 140, 40, 0.9) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px -5px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .destiny-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(212, 175, 55, 0.6);
+        }
+        
+        .bazi-cell {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            letter-spacing: 0.2em;
+        }
+        
+        .hidden { display: none !important; }
+        
+        .petal {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, #ffb7c5 0%, #ff69b4 100%);
+            border-radius: 0 50% 0 50%;
+            opacity: 0.6;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="text-gray-100 relative">
+
+    <!-- 宇宙背景 -->
+    <div class="cosmic-bg">
+        <div class="star-field"></div>
+        <div class="destiny-wheel"></div>
+        <div id="lanterns"></div>
+        <div id="petals"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+        
+        <!-- 开始页面 -->
+        <div id="start-page" class="glass-card rounded-3xl p-8 md:p-12 max-w-2xl w-full text-center">
+            <div class="mb-6">
+                <div class="inline-block p-4 rounded-full bg-gradient-to-br from-yellow-600/20 to-pink-600/20 border border-yellow-500/30 mb-4">
+                    <span class="text-5xl">☯️</span>
+                </div>
+                <h1 class="font-calligraphy text-5xl md:text-6xl mb-3 glow-text text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-pink-400">
+                    命理姻缘
+                </h1>
+                <h2 class="font-classic text-xl md:text-2xl text-yellow-200/80 tracking-widest mb-4">
+                    三生石上前生定，姻缘簿上今生缘
+                </h2>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4 mb-8 text-sm">
+                <div class="p-3 rounded-xl bg-white/5 border border-yellow-500/20">
+                    <div class="text-2xl mb-1">🎋</div>
+                    <div class="text-yellow-200 font-bold text-xs">八字合婚</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-yellow-500/20">
+                    <div class="text-2xl mb-1">🔮</div>
+                    <div class="text-yellow-200 font-bold text-xs">紫微斗数</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-yellow-500/20">
+                    <div class="text-2xl mb-1">⚛️</div>
+                    <div class="text-yellow-200 font-bold text-xs">五行互补</div>
+                </div>
+            </div>
+
+            <p class="text-gray-300 text-sm leading-relaxed mb-6 max-w-lg mx-auto">
+                通过二十道命理精算题目，结合传统八字五行、紫微斗数命盘，
+                为你揭示命中注定的那个人的真实模样。
+            </p>
+
+            <button onclick="startTest()" class="destiny-btn px-10 py-3 rounded-full text-base font-bold text-white tracking-wider">
+                开启命盘 →
+            </button>
+            
+            <div class="mt-6 text-xs text-gray-500">
+                <span>已有 <strong class="text-yellow-500">128,492</strong> 人求签</span>
+            </div>
+        </div>
+
+        <!-- 测试页面 -->
+        <div id="quiz-page" class="hidden glass-card rounded-3xl p-6 md:p-8 max-w-3xl w-full">
+            <!-- 头部信息 -->
+            <div class="flex justify-between items-center mb-6 border-b border-yellow-500/20 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="wuxing-icon wuxing-wood text-sm" id="current-wuxing">木</div>
+                    <div>
+                        <div class="text-xs text-yellow-500/80">当前宫位</div>
+                        <div class="text-sm font-bold text-yellow-100" id="palace-name">命宫</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs text-yellow-500/80">进度</div>
+                    <div class="text-lg font-bold text-yellow-100"><span id="current-num">1</span> / 20</div>
+                </div>
+            </div>
+
+            <!-- 进度条 -->
+            <div class="mb-6">
+                <div class="progress-container h-2">
+                    <div id="progress-bar" class="progress-bar h-full rounded-full" style="width: 5%"></div>
+                </div>
+            </div>
+
+            <!-- 问题区域 -->
+            <div class="mb-6">
+                <div class="mb-2 text-yellow-500/80 text-xs tracking-wider" id="question-category">【命宫】性格根基</div>
+                <h2 id="question-title" class="font-classic text-xl md:text-2xl font-bold text-yellow-50 mb-2 leading-relaxed">
+                    加载中...
+                </h2>
+                <p id="question-subtitle" class="text-gray-400 text-sm mb-6 italic border-l-2 border-yellow-500/30 pl-3">
+                    副标题
+                </p>
+                
+                <div id="options-container" class="space-y-3">
+                    <!-- 选项动态生成 -->
+                </div>
+            </div>
+
+            <!-- 导航 -->
+            <div class="flex justify-between items-center pt-4 border-t border-yellow-500/10">
+                <button onclick="prevQuestion()" id="prev-btn" class="px-4 py-2 rounded-full border border-yellow-500/30 text-yellow-200/60 hover:text-yellow-200 text-sm transition-all disabled:opacity-30" disabled>
+                    ← 上一题
+                </button>
+                
+                <div class="flex space-x-1" id="dots-container"></div>
+                
+                <button onclick="nextQuestion()" id="next-btn" class="px-4 py-2 rounded-full bg-gray-800 text-gray-400 text-sm cursor-not-allowed" disabled>
+                    下一题 →
+                </button>
+            </div>
+        </div>
+
+        <!-- 计算页面 -->
+        <div id="calculating-page" class="hidden glass-card rounded-3xl p-8 max-w-lg w-full text-center">
+            <div class="relative w-48 h-48 mx-auto mb-6">
+                <div class="absolute inset-0 border-2 border-yellow-500/30 rounded-full animate-spin" style="animation-duration: 8s;">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-yellow-500 text-xs">子</div>
+                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-yellow-500 text-xs">午</div>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-5xl animate-pulse">☯️</div>
+                </div>
+            </div>
+            
+            <h2 class="font-calligraphy text-2xl text-yellow-200 mb-3">正在排盘</h2>
+            <p id="calculating-text" class="text-gray-400 text-sm mb-6">推算命主八字...</p>
+            
+            <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="p-2 rounded bg-white/5 border border-yellow-500/20" id="calc-step-0">
+                    <div class="text-yellow-500 mb-1">排八字</div>
+                </div>
+                <div class="p-2 rounded bg-white/5 border border-gray-700" id="calc-step-1">
+                    <div class="text-gray-500">定五行</div>
+                </div>
+                <div class="p-2 rounded bg-white/5 border border-gray-700" id="calc-step-2">
+                    <div class="text-gray-500">查夫妻宫</div>
+                </div>
+                <div class="p-2 rounded bg-white/5 border border-gray-700" id="calc-step-3">
+                    <div class="text-gray-500">合婚配</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div id="result-page" class="hidden w-full max-w-4xl pb-8">
+            
+            <!-- 头部 -->
+            <div class="glass-card rounded-3xl p-6 md:p-8 mb-4 fade-in-up">
+                <div class="text-center mb-6">
+                    <div class="inline-block p-3 rounded-full bg-gradient-to-br from-yellow-600/20 to-pink-600/20 border border-yellow-500/30 mb-3">
+                        <span class="text-3xl">📜</span>
+                    </div>
+                    <h1 class="font-calligraphy text-3xl md:text-4xl mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500">
+                        姻缘命书
+                    </h1>
+                    <p class="text-gray-400 text-xs" id="result-date">2026年3月21日</p>
+                </div>
+
+                <!-- 核心信息 -->
+                <div class="bg-gradient-to-br from-yellow-600/20 via-purple-900/20 to-pink-600/20 rounded-xl p-6 border border-yellow-500/30 mb-6">
+                    <div class="text-center mb-4">
+                        <div class="inline-block px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-xs mb-2 border border-yellow-500/30">
+                            命定良缘
+                        </div>
+                        <h2 class="font-calligraphy text-3xl text-yellow-200 mb-2" id="destiny-type">水木清华格</h2>
+                        <p class="text-yellow-100/80 italic text-sm" id="destiny-poem">"水木相生，琴瑟和鸣"</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-black/20 rounded-lg p-3 border border-white/10">
+                            <h4 class="text-yellow-400 mb-2 text-xs">🎋 命主特征</h4>
+                            <p class="text-gray-300 leading-relaxed" id="user-traits">你如壬水般智慧灵动...</p>
+                        </div>
+                        <div class="bg-black/20 rounded-lg p-3 border border-white/10">
+                            <h4 class="text-pink-400 mb-2 text-xs">🌸 伴侣命格</h4>
+                            <p class="text-gray-300 leading-relaxed" id="partner-destiny">你的正缘应是甲木...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 八字和五行 -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-black/30 rounded-xl p-4 border border-yellow-500/20">
+                        <h3 class="text-center text-yellow-200 text-sm mb-3">生辰八字</h3>
+                        <div class="grid grid-cols-4 gap-2 text-center text-xs mb-2">
+                            <div class="text-gray-500">年柱</div>
+                            <div class="text-gray-500">月柱</div>
+                            <div class="text-gray-500">日柱</div>
+                            <div class="text-gray-500">时柱</div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2 text-center">
+                            <div class="space-y-1">
+                                <div class="text-red-400 font-bold" id="yg-0">甲</div>
+                                <div class="text-green-400 font-bold bazi-cell mx-auto text-sm" id="yz-0">寅</div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-red-400 font-bold" id="yg-1">丙</div>
+                                <div class="text-yellow-400 font-bold bazi-cell mx-auto text-sm" id="yz-1">辰</div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-blue-400 font-bold" id="yg-2">壬</div>
+                                <div class="text-blue-400 font-bold bazi-cell mx-auto text-sm" id="yz-2">子</div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="text-yellow-400 font-bold" id="yg-3">戊</div>
+                                <div class="text-red-400 font-bold bazi-cell mx-auto text-sm" id="yz-3">午</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <h3 class="text-center text-yellow-200 text-sm mb-2">五行强弱</h3>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-green-400">木</span>
+                            <div class="flex-1 mx-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-500 rounded-full transition-all duration-1000" style="width: 0%" id="wuxing-mu"></div>
+                            </div>
+                            <span class="text-gray-400 w-8 text-right" id="wuxing-mu-text">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-red-400">火</span>
+                            <div class="flex-1 mx-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-red-500 rounded-full transition-all duration-1000" style="width: 0%" id="wuxing-huo"></div>
+                            </div>
+                            <span class="text-gray-400 w-8 text-right" id="wuxing-huo-text">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-yellow-400">土</span>
+                            <div class="flex-1 mx-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-yellow-500 rounded-full transition-all duration-1000" style="width: 0%" id="wuxing-tu"></div>
+                            </div>
+                            <span class="text-gray-400 w-8 text-right" id="wuxing-tu-text">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-300">金</span>
+                            <div class="flex-1 mx-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-gray-300 rounded-full transition-all duration-1000" style="width: 0%" id="wuxing-jin"></div>
+                            </div>
+                            <span class="text-gray-400 w-8 text-right" id="wuxing-jin-text">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-blue-400">水</span>
+                            <div class="flex-1 mx-2 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500 rounded-full transition-all duration-1000" style="width: 0%" id="wuxing-shui"></div>
+                            </div>
+                            <span class="text-gray-400 w-8 text-right" id="wuxing-shui-text">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细分析 -->
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="glass-card rounded-xl p-5 fade-in-up delay-100">
+                    <h3 class="font-classic text-lg text-yellow-200 mb-3">伴侣性格</h3>
+                    <div class="space-y-3 text-sm text-gray-300" id="personality-detail">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-5 fade-in-up delay-200">
+                    <h3 class="font-classic text-lg text-yellow-200 mb-3">相处之道</h3>
+                    <div class="space-y-3 text-sm text-gray-300" id="relationship-fortune">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 未来场景 -->
+            <div class="glass-card rounded-xl p-5 mb-4 fade-in-up delay-300">
+                <h3 class="font-classic text-lg text-yellow-200 mb-4">三生场景</h3>
+                <div class="space-y-3" id="future-scenes">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
+            <!-- 五行建议 -->
+            <div class="glass-card rounded-xl p-5 mb-4 fade-in-up delay-400">
+                <h3 class="font-classic text-lg text-yellow-200 mb-4 text-center">五行调和锦囊</h3>
+                <div class="grid grid-cols-5 gap-2 text-center text-xs" id="wuxing-advice">
+                    <div class="p-2 rounded-lg bg-green-500/10 border border-green-500/30">
+                        <div class="text-lg mb-1">🌲</div>
+                        <div class="text-green-400 font-bold">木</div>
+                    </div>
+                    <div class="p-2 rounded-lg bg-red-500/10 border border-red-500/30">
+                        <div class="text-lg mb-1">🔥</div>
+                        <div class="text-red-400 font-bold">火</div>
+                    </div>
+                    <div class="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                        <div class="text-lg mb-1">⛰️</div>
+                        <div class="text-yellow-400 font-bold">土</div>
+                    </div>
+                    <div class="p-2 rounded-lg bg-gray-400/10 border border-gray-400/30">
+                        <div class="text-lg mb-1">⚔️</div>
+                        <div class="text-gray-300 font-bold">金</div>
+                    </div>
+                    <div class="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                        <div class="text-lg mb-1">💧</div>
+                        <div class="text-blue-400 font-bold">水</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 寄语 -->
+            <div class="glass-card rounded-xl p-6 fade-in-up delay-500">
+                <h3 class="font-calligraphy text-2xl text-center text-yellow-200 mb-4">命师寄语</h3>
+                <div class="text-sm text-gray-300 leading-relaxed text-center max-w-2xl mx-auto" id="final-message">
+                    <!-- 动态生成 -->
+                </div>
+                
+                <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="restartTest()" class="px-6 py-2 rounded-full border border-yellow-500/30 text-yellow-200 hover:bg-yellow-500/10 transition-all text-sm">
+                        重新排盘
+                    </button>
+                    <button onclick="saveResult()" class="destiny-btn px-6 py-2 rounded-full text-white text-sm">
+                        保存命书
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 20道命理题目
+        const questions = [
+            {
+                id: 1, palace: "命宫", wuxing: "木", category: "性格根基",
+                title: "深夜独处时，你脑海中常浮现的念头是？",
+                subtitle: "探查元神属性，影响未来伴侣的精神共鸣层次",
+                options: [
+                    { text: "回顾过往，思考人生意义与方向", scores: { wood: 3, water: 2 } },
+                    { text: "规划未来，设定具体的目标计划", scores: { metal: 3, earth: 2 } },
+                    { text: "回忆美好时光，感受当下的情绪", scores: { fire: 3, water: 2 } },
+                    { text: "分析具体问题，寻找解决方案", scores: { water: 3, metal: 2 } }
+                ]
+            },
+            {
+                id: 2, palace: "命宫", wuxing: "火", category: "性格根基",
+                title: "面对突如其来的变故，你的第一反应是？",
+                subtitle: "命宫看应变能力，影响伴侣需要的稳定性",
+                options: [
+                    { text: "迅速接受并寻找新机会", scores: { wood: 3, fire: 2 } },
+                    { text: "先感到焦虑，然后慢慢调整", scores: { water: 3, earth: 1 } },
+                    { text: "冷静分析，制定应对策略", scores: { metal: 3, water: 2 } },
+                    { text: "寻求他人建议和支持", scores: { earth: 3, wood: 1 } }
+                ]
+            },
+            {
+                id: 3, palace: "命宫", wuxing: "土", category: "性格根基",
+                title: "你认为自己最大的性格特点是？",
+                subtitle: "命宫主星决定，影响与伴侣的相处模式",
+                options: [
+                    { text: "善良温和，善于倾听", scores: { earth: 3, water: 2 } },
+                    { text: "独立自主，有主见", scores: { metal: 3, wood: 2 } },
+                    { text: "热情开朗，感染力强", scores: { fire: 3, wood: 2 } },
+                    { text: "细腻敏感，洞察人心", scores: { water: 3, metal: 1 } }
+                ]
+            },
+            {
+                id: 4, palace: "夫妻宫", wuxing: "火", category: "姻缘核心",
+                title: "你理想中的求婚场景是？",
+                subtitle: "夫妻宫重中之重，直接看姻缘质量",
+                options: [
+                    { text: "只有两个人的私密时刻，真诚简单", scores: { water: 3, metal: 2 } },
+                    { text: "精心策划的惊喜，有亲友见证", scores: { fire: 3, wood: 2 } },
+                    { text: "旅行中的意外惊喜，自然发生", scores: { wood: 3, fire: 2 } },
+                    { text: "传统正式，尊重双方父母", scores: { earth: 3, metal: 2 } }
+                ]
+            },
+            {
+                id: 5, palace: "夫妻宫", wuxing: "土", category: "姻缘核心",
+                title: "你认为婚姻生活中最重要的是？",
+                subtitle: "夫妻宫看婚姻观，决定伴侣选择标准",
+                options: [
+                    { text: "彼此信任，坦诚相待", scores: { earth: 3, metal: 2 } },
+                    { text: "共同成长，互相成就", scores: { wood: 3, fire: 2 } },
+                    { text: "激情浪漫，保持新鲜感", scores: { fire: 3, water: 2 } },
+                    { text: "平淡安稳，细水长流", scores: { water: 3, earth: 2 } }
+                ]
+            },
+            {
+                id: 6, palace: "夫妻宫", wuxing: "金", category: "姻缘核心",
+                title: "当伴侣与你有重大分歧时，你希望？",
+                subtitle: "夫妻宫看相处模式，影响婚姻稳定性",
+                options: [
+                    { text: "立即沟通，当场解决", scores: { fire: 3, metal: 2 } },
+                    { text: "冷静一段时间再谈", scores: { water: 3, metal: 2 } },
+                    { text: "一方妥协，避免冲突", scores: { earth: 3, water: 2 } },
+                    { text: "求同存异，尊重差异", scores: { wood: 3, earth: 2 } }
+                ]
+            },
+            {
+                id: 7, palace: "夫妻宫", wuxing: "水", category: "姻缘核心",
+                title: "你对伴侣过去的情史态度是？",
+                subtitle: "夫妻宫看包容度，影响感情纯度",
+                options: [
+                    { text: "完全不在意，只看现在", scores: { wood: 3, water: 2 } },
+                    { text: "希望了解，但不深究", scores: { earth: 3, water: 2 } },
+                    { text: "会有些介意，需要 reassurance", scores: { metal: 2, water: 3 } },
+                    { text: "认为经历让人成熟，是财富", scores: { water: 3, wood: 2 } }
+                ]
+            },
+            {
+                id: 8, palace: "财帛宫", wuxing: "土", category: "财富观念",
+                title: "你的消费观念更接近？",
+                subtitle: "财帛宫看金钱态度，影响家庭经济",
+                options: [
+                    { text: "精打细算，注重储蓄", scores: { metal: 3, earth: 2 } },
+                    { text: "该花则花，享受生活", scores: { fire: 3, wood: 2 } },
+                    { text: "投资未来，钱生钱", scores: { water: 3, metal: 2 } },
+                    { text: "平衡收支，适度消费", scores: { earth: 3, water: 2 } }
+                ]
+            },
+            {
+                id: 9, palace: "财帛宫", wuxing: "金", category: "财富观念",
+                title: "婚后财务管理模式，你希望？",
+                subtitle: "财帛宫看理财方式，影响夫妻经济关系",
+                options: [
+                    { text: "共同账户，完全透明", scores: { earth: 3, fire: 2 } },
+                    { text: "各管各的，互不干涉", scores: { metal: 3, wood: 2 } },
+                    { text: "部分共同，部分私有", scores: { water: 3, earth: 2 } },
+                    { text: "由擅长理财的一方管理", scores: { wood: 3, metal: 2 } }
+                ]
+            },
+            {
+                id: 10, palace: "财帛宫", wuxing: "水", category: "财富观念",
+                title: "对于物质条件在婚姻中的重要性？",
+                subtitle: "财帛宫看现实态度，影响择偶标准",
+                options: [
+                    { text: "非常重要，基础不牢地动山摇", scores: { earth: 3, metal: 2 } },
+                    { text: "够用就好，精神契合更重要", scores: { wood: 3, fire: 2 } },
+                    { text: "希望通过共同努力改善", scores: { fire: 3, wood: 2 } },
+                    { text: "不介意对方暂时清贫", scores: { water: 3, wood: 2 } }
+                ]
+            },
+            {
+                id: 11, palace: "疾厄宫", wuxing: "木", category: "身心状况",
+                title: "压力大时，你通常会？",
+                subtitle: "疾厄宫看身心健康，影响伴侣支持方式",
+                options: [
+                    { text: "运动发泄，流汗解压", scores: { wood: 3, fire: 2 } },
+                    { text: "独自静处，慢慢消化", scores: { water: 3, metal: 2 } },
+                    { text: "向亲友倾诉，寻求安慰", scores: { fire: 3, earth: 2 } },
+                    { text: "购物或美食，转移注意", scores: { earth: 3, water: 2 } }
+                ]
+            },
+            {
+                id: 12, palace: "疾厄宫", wuxing: "火", category: "身心状况",
+                title: "你的睡眠质量通常如何？",
+                subtitle: "疾厄宫看体质，影响生活作息匹配",
+                options: [
+                    { text: "倒头就睡，雷打不动", scores: { earth: 3, metal: 2 } },
+                    { text: "易醒多梦，睡眠较浅", scores: { water: 3, fire: 1 } },
+                    { text: "熬夜习惯，晚睡晚起", scores: { fire: 3, wood: 2 } },
+                    { text: "规律作息，早睡早起", scores: { metal: 3, earth: 2 } }
+                ]
+            },
+            {
+                id: 13, palace: "迁移宫", wuxing: "土", category: "迁移变动",
+                title: "对于异地恋的态度是？",
+                subtitle: "迁移宫看远距离关系，影响缘分深浅",
+                options: [
+                    { text: "可以接受，距离产生美", scores: { metal: 3, water: 2 } },
+                    { text: "尽量避免，需要陪伴", scores: { earth: 3, fire: 2 } },
+                    { text: "视情况而定，看感情基础", scores: { water: 3, wood: 2 } },
+                    { text: "愿意为爱迁移，到对方城市", scores: { wood: 3, fire: 2 } }
+                ]
+            },
+            {
+                id: 14, palace: "迁移宫", wuxing: "金", category: "迁移变动",
+                title: "理想的居住地是？",
+                subtitle: "迁移宫看环境偏好，影响定居选择",
+                options: [
+                    { text: "繁华都市，便利现代", scores: { metal: 3, fire: 2 } },
+                    { text: "宁静小镇，慢节奏生活", scores: { earth: 3, water: 2 } },
+                    { text: "自然风光，山水之间", scores: { wood: 3, earth: 2 } },
+                    { text: "文化古都，历史底蕴", scores: { water: 3, metal: 2 } }
+                ]
+            },
+            {
+                id: 15, palace: "官禄宫", wuxing: "火", category: "事业前程",
+                title: "事业与家庭冲突时，你倾向？",
+                subtitle: "官禄宫看事业心，影响家庭分工",
+                options: [
+                    { text: "以事业为重，经济基础决定一切", scores: { metal: 3, water: 2 } },
+                    { text: "家庭优先，工作可以调整", scores: { earth: 3, fire: 2 } },
+                    { text: "寻求平衡，两者都重要", scores: { wood: 3, earth: 2 } },
+                    { text: "看阶段，年轻时拼事业", scores: { fire: 3, metal: 2 } }
+                ]
+            },
+            {
+                id: 16, palace: "官禄宫", wuxing: "土", category: "事业前程",
+                title: "你希望伴侣的事业状态是？",
+                subtitle: "官禄宫看配偶事业，影响家庭结构",
+                options: [
+                    { text: "事业成功，共同进步", scores: { metal: 3, fire: 2 } },
+                    { text: "稳定即可，不求大富大贵", scores: { earth: 3, water: 2 } },
+                    { text: "支持我专注事业，Ta照顾家庭", scores: { wood: 2, earth: 3 } },
+                    { text: "无所谓，开心最重要", scores: { water: 3, wood: 2 } }
+                ]
+            },
+            {
+                id: 17, palace: "田宅宫", wuxing: "水", category: "田宅家运",
+                title: "你理想中的家庭氛围是？",
+                subtitle: "田宅宫看家庭观，影响婚后生活",
+                options: [
+                    { text: "热闹温馨，常有亲友聚会", scores: { fire: 3, earth: 2 } },
+                    { text: "安静私密，享受二人世界", scores: { water: 3, metal: 2 } },
+                    { text: "井井有条，规矩明确", scores: { metal: 3, earth: 2 } },
+                    { text: "随性自然，舒适自在", scores: { wood: 3, water: 2 } }
+                ]
+            },
+            {
+                id: 18, palace: "田宅宫", wuxing: "木", category: "田宅家运",
+                title: "关于与长辈同住的态度？",
+                subtitle: "田宅宫看代际关系，影响家庭结构",
+                options: [
+                    { text: "乐意同住，享受天伦之乐", scores: { earth: 3, fire: 2 } },
+                    { text: "希望分开住，保持独立空间", scores: { metal: 3, wood: 2 } },
+                    { text: "附近居住，方便照顾又有距离", scores: { water: 3, earth: 2 } },
+                    { text: "视情况而定，可以轮流", scores: { wood: 3, metal: 2 } }
+                ]
+            },
+            {
+                id: 19, palace: "福德宫", wuxing: "火", category: "精神福报",
+                title: "你的精神寄托主要来自？",
+                subtitle: "福德宫看精神世界，影响灵魂契合度",
+                options: [
+                    { text: "艺术创作或审美体验", scores: { wood: 3, fire: 2 } },
+                    { text: "哲学思考或宗教信仰", scores: { water: 3, metal: 2 } },
+                    { text: "帮助他人，社会贡献", scores: { earth: 3, fire: 2 } },
+                    { text: "自然探索，户外活动", scores: { wood: 3, earth: 2 } }
+                ]
+            },
+            {
+                id: 20, palace: "父母宫", wuxing: "金", category: "父母长辈",
+                title: "你的原生家庭对你的影响？",
+                subtitle: "父母宫看成长背景，影响亲密关系模式",
+                options: [
+                    { text: "温暖支持，给了我安全感", scores: { earth: 3, fire: 2 } },
+                    { text: "严格教育，让我追求完美", scores: { metal: 3, earth: 2 } },
+                    { text: "较少管教，培养独立性", scores: { wood: 3, water: 2 } },
+                    { text: "复杂多变，让我早熟敏感", scores: { water: 3, metal: 2 } }
+                ]
+            }
+        ];
+
+        // 状态管理
+        let currentQuestion = 0;
+        let answers = new Array(20).fill(null);
+        let scores = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+
+        // 初始化
+        function init() {
+            createDecorations();
+            createNavDots();
+        }
+
+        function createDecorations() {
+            const lanternContainer = document.getElementById('lanterns');
+            for (let i = 0; i < 3; i++) {
+                const lantern = document.createElement('div');
+                lantern.className = 'floating-lantern';
+                lantern.style.left = (20 + i * 30) + '%';
+                lantern.style.animationDelay = (i * 5) + 's';
+                lanternContainer.appendChild(lantern);
+            }
+
+            const petalContainer = document.getElementById('petals');
+            for (let i = 0; i < 10; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.animationDelay = Math.random() * 5 + 's';
+                petal.style.animationDuration = (5 + Math.random() * 5) + 's';
+                petalContainer.appendChild(petal);
+            }
+        }
+
+        function createNavDots() {
+            const container = document.getElementById('dots-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'w-1.5 h-1.5 rounded-full bg-gray-600 transition-all';
+                dot.id = `dot-${i}`;
+                container.appendChild(dot);
+            }
+        }
+
+        function startTest() {
+            document.getElementById('start-page').classList.add('hidden');
+            document.getElementById('quiz-page').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            
+            document.getElementById('current-wuxing').className = `wuxing-icon wuxing-${q.wuxing}`;
+            document.getElementById('current-wuxing').textContent = q.wuxing;
+            document.getElementById('palace-name').textContent = q.palace;
+            document.getElementById('current-num').textContent = currentQuestion + 1;
+            
+            const progress = ((currentQuestion + 1) / 20) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            document.getElementById('question-category').textContent = `【${q.palace}】${q.category}`;
+            document.getElementById('question-title').textContent = q.title;
+            document.getElementById('question-subtitle').textContent = q.subtitle;
+            
+            for (let i = 0; i < 20; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === currentQuestion) {
+                    dot.className = 'w-2 h-2 rounded-full bg-yellow-500 shadow-lg shadow-yellow-500/50';
+                } else if (i < currentQuestion) {
+                    dot.className = 'w-1.5 h-1.5 rounded-full bg-yellow-500/50';
+                } else {
+                    dot.className = 'w-1.5 h-1.5 rounded-full bg-gray-600';
+                }
+            }
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full text-left p-4 rounded-xl mb-2 flex items-center group ${answers[currentQuestion] === idx ? 'selected' : ''}`;
+                btn.onclick = () => selectOption(idx);
+                
+                const letters = ['甲', '乙', '丙', '丁'];
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-full bg-white/10 border border-yellow-500/30 flex items-center justify-center mr-3 text-yellow-500 font-bold text-sm group-hover:bg-yellow-500/20">${letters[idx]}</span>
+                    <span class="flex-1 text-gray-200 text-sm">${opt.text}</span>
+                `;
+                container.appendChild(btn);
+            });
+            
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            
+            const nextBtn = document.getElementById('next-btn');
+            if (answers[currentQuestion] !== null) {
+                nextBtn.disabled = false;
+                nextBtn.className = 'px-4 py-2 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-white font-medium hover:shadow-lg transition-all cursor-pointer';
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.className = 'px-4 py-2 rounded-full bg-gray-800 text-gray-400 cursor-not-allowed';
+            }
+            
+            nextBtn.textContent = currentQuestion === 19 ? '生成命书 →' : '下一题 →';
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, i) => {
+                if (i === index) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+            
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'px-4 py-2 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-white font-medium hover:shadow-lg transition-all cursor-pointer';
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < 19) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showCalculating();
+            }
+        }
+
+        function showCalculating() {
+            document.getElementById('quiz-page').classList.add('hidden');
+            document.getElementById('calculating-page').classList.remove('hidden');
+            
+            calculateScores();
+            
+            const steps = [
+                { text: "排列八字命盘...", step: 0 },
+                { text: "分析五行生克...", step: 1 },
+                { text: "查看夫妻宫位...", step: 2 },
+                { text: "合婚配对演算...", step: 3 }
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    document.getElementById('calculating-text').textContent = steps[i].text;
+                    const stepEl = document.getElementById(`calc-step-${steps[i].step}`);
+                    stepEl.className = 'p-2 rounded bg-yellow-500/20 border border-yellow-500/50 transform scale-105 transition-all';
+                    stepEl.querySelector('div').className = 'text-yellow-500 font-bold';
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(showResult, 1000);
+                }
+            }, 800);
+        }
+
+        function calculateScores() {
+            answers.forEach((ansIdx, qIdx) => {
+                if (ansIdx !== null) {
+                    const option = questions[qIdx].options[ansIdx];
+                    const optionScores = option.scores;
+                    for (let key in optionScores) {
+                        if (scores.hasOwnProperty(key)) {
+                            scores[key] += optionScores[key];
+                        }
+                    }
+                }
+            });
+        }
+
+        function showResult() {
+            document.getElementById('calculating-page').classList.add('hidden');
+            document.getElementById('result-page').classList.remove('hidden');
+            
+            const date = new Date();
+            document.getElementById('result-date').textContent = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+            
+            generateResult();
+        }
+
+        function generateResult() {
+            const wuxingScores = { ...scores };
+            const dominantWuxing = Object.keys(wuxingScores).reduce((a, b) => wuxingScores[a] > wuxingScores[b] ? a : b);
+            
+            const destinyTypes = {
+                wood: { 
+                    name: "甲木参天格", 
+                    poem: "甲木参天，脱胎要火；春不容金，秋不容土",
+                    userTrait: "你如甲木般正直向上，有领导气质但偶尔固执。需要庚金（果断）与丙火（热情）的伴侣来平衡。",
+                    partnerTrait: "你的正缘应是庚金或丙火日主，性格果断热情，能给你方向感。Ta的出现会填补你五行中的金与火。"
+                },
+                fire: { 
+                    name: "丙火太阳格", 
+                    poem: "丙火猛烈，欺霜侮雪；能煅庚金，逢辛反怯",
+                    userTrait: "你如丙火般热情开朗，感染力强但偶尔急躁。需要壬水（智慧）与己土（稳重）的伴侣来调和。",
+                    partnerTrait: "你的正缘应是壬水或己土日主，性格智慧稳重，能给你安定感。Ta的出现会填补你五行中的水与土。"
+                },
+                earth: { 
+                    name: "戊土城墙格", 
+                    poem: "戊土固重，既中且正；静翕动辟，万物司命",
+                    userTrait: "你如戊土般稳重可靠，包容力强但偶尔沉闷。需要甲木（进取）与庚金（锐气）的伴侣来激活。",
+                    partnerTrait: "你的正缘应是甲木或庚金日主，性格进取果断，能给你活力。Ta的出现会填补你五行中的木与金。"
+                },
+                metal: { 
+                    name: "庚金剑戟格", 
+                    poem: "庚金带煞，刚健为最；得水而清，得火而锐",
+                    userTrait: "你如庚金般刚毅果断，逻辑清晰但偶尔冷酷。需要丁火（温暖）与乙木（柔韧）的伴侣来软化。",
+                    partnerTrait: "你的正缘应是丁火或乙木日主，性格温暖柔韧，能给你温情。Ta的出现会填补你五行中的火与木。"
+                },
+                water: { 
+                    name: "壬水汪洋格", 
+                    poem: "壬水通河，能泄金气；刚中之德，周流不滞",
+                    userTrait: "你如壬水般智慧灵动，适应力强但偶尔多变。需要戊土（稳定）与丙火（光明）的伴侣来安定。",
+                    partnerTrait: "你的正缘应是戊土或丙火日主，性格稳重光明，能给你安全感。Ta的出现会填补你五行中的土与火。"
+                }
+            };
+            
+            const type = destinyTypes[dominantWuxing];
+            document.getElementById('destiny-type').textContent = type.name;
+            document.getElementById('destiny-poem').textContent = `"${type.poem}"`;
+            document.getElementById('user-traits').textContent = type.userTrait;
+            document.getElementById('partner-destiny').textContent = type.partnerTrait;
+            
+            // 生成八字
+            const tiangan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+            const dizhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+            const wuxingIndex = { wood: 0, fire: 2, earth: 4, metal: 6, water: 8 };
+            const base = wuxingIndex[dominantWuxing];
+            
+            document.getElementById('yg-0').textContent = tiangan[base % 10];
+            document.getElementById('yz-0').textContent = dizhi[(base + 2) % 12];
+            document.getElementById('yg-1').textContent = tiangan[(base + 2) % 10];
+            document.getElementById('yz-1').textContent = dizhi[(base + 4) % 12];
+            document.getElementById('yg-2').textContent = tiangan[(base + 8) % 10];
+            document.getElementById('yz-2').textContent = dizhi[(base + 6) % 12];
+            document.getElementById('yg-3').textContent = tiangan[(base + 4) % 10];
+            document.getElementById('yz-3').textContent = dizhi[(base + 8) % 12];
+            
+            // 五行进度条
+            const maxScore = Math.max(...Object.values(wuxingScores));
+            const normalize = (s) => Math.min(100, Math.round((s / (maxScore || 1)) * 100));
+            
+            setTimeout(() => {
+                document.getElementById('wuxing-mu').style.width = normalize(wuxingScores.wood) + '%';
+                document.getElementById('wuxing-mu-text').textContent = normalize(wuxingScores.wood) + '%';
+                document.getElementById('wuxing-huo').style.width = normalize(wuxingScores.fire) + '%';
+                document.getElementById('wuxing-huo-text').textContent = normalize(wuxingScores.fire) + '%';
+                document.getElementById('wuxing-tu').style.width = normalize(wuxingScores.earth) + '%';
+                document.getElementById('wuxing-tu-text').textContent = normalize(wuxingScores.earth) + '%';
+                document.getElementById('wuxing-jin').style.width = normalize(wuxingScores.metal) + '%';
+                document.getElementById('wuxing-jin-text').textContent = normalize(wuxingScores.metal) + '%';
+                document.getElementById('wuxing-shui').style.width = normalize(wuxingScores.water) + '%';
+                document.getElementById('wuxing-shui-text').textContent = normalize(wuxingScores.water) + '%';
+            }, 100);
+            
+            // 个性化内容
+            const contents = {
+                wood: {
+                    traits: ["正直有原则，不随波逐流", "有上进心，追求成长", "偶尔固执，需要耐心沟通", "富有同情心，乐于助人"],
+                    scenes: [
+                        { icon: "🌱", title: "共同成长", desc: "一起报名学习新技能，在书房各自阅读，偶尔交换心得。" },
+                        { icon: "🏃", title: "户外活动", desc: "周末徒步登山，在自然中放松，Ta会鼓励你挑战自我。" },
+                        { icon: "💼", title: "事业支持", desc: "在你事业关键期，Ta会给出关键建议，成为你的智囊。" }
+                    ],
+                    advice: "你五行木旺，宜多接触金属性（白色、西方）和火属性（红色、南方）来平衡。避免过度固执，学会灵活变通。"
+                },
+                fire: {
+                    traits: ["热情开朗，充满活力", "表达直接，不藏心事", "创造力强，喜欢新鲜", "需要被关注和认可"],
+                    scenes: [
+                        { icon: "🎉", title: "社交场合", desc: "Ta会陪你参加聚会，在人群中默契配合，成为最佳搭档。" },
+                        { icon: "🎨", title: "创意碰撞", desc: "深夜的头脑风暴，你们会激发出彼此的灵感火花。" },
+                        { icon: "🌅", title: "激情时刻", desc: "即兴的周末旅行，说走就走，在陌生城市创造回忆。" }
+                    ],
+                    advice: "你五行火旺，宜多接触水属性（黑色、北方）和土属性（黄色、中央）来平衡。学会控制情绪，避免冲动决定。"
+                },
+                earth: {
+                    traits: ["稳重可靠，给人安全感", "包容心强，善于忍耐", "务实理性，注重实际", "偶尔固执，不善变通"],
+                    scenes: [
+                        { icon: "🏠", title: "温馨家居", desc: "一起布置家居，在厨房合作烹饪，享受平淡的日常幸福。" },
+                        { icon: "📋", title: "规划未来", desc: "认真讨论五年计划，计算购房基金，为共同目标努力。" },
+                        { icon: "🛡️", title: "危机时刻", desc: "遇到困难时，你们会成为彼此最坚实的后盾，不离不弃。" }
+                    ],
+                    advice: "你五行土旺，宜多接触木属性（绿色、东方）和金属性（白色、西方）来平衡。适当放松，不要过于严肃。"
+                },
+                metal: {
+                    traits: ["果断决绝，执行力强", "逻辑清晰，追求效率", "重情重义，但表达含蓄", "高标准，追求完美"],
+                    scenes: [
+                        { icon: "⚔️", title: "问题解决", desc: "遇到难题时，你们会冷静分析，分工合作，高效解决。" },
+                        { icon: "🎭", title: "反差温柔", desc: "Ta会看到你不为人知的柔软面，在你坚强外表下发现温柔。" },
+                        { icon: "🎁", title: "实际行动", desc: "不会甜言蜜语，但会默默记住你的需求，用行动证明爱意。" }
+                    ],
+                    advice: "你五行金旺，宜多接触火属性（红色、南方）和水属性（黑色、北方）来平衡。学会表达情感，不要过度压抑。"
+                },
+                water: {
+                    traits: ["智慧灵动，思维敏捷", "适应力强，随遇而安", "情感丰富，善解人意", "偶尔多疑，需要安全感"],
+                    scenes: [
+                        { icon: "📚", title: "深度对话", desc: "深夜的长谈，从哲学到人生，你们能在精神层面深度共鸣。" },
+                        { icon: "🌊", title: "近水活动", desc: "海边度假，湖边散步，水边总能让你们的关系更加亲密。" },
+                        { icon: "🎵", title: "艺术欣赏", desc: "一起听音乐会，看艺术展览，在美的体验中增进感情。" }
+                    ],
+                    advice: "你五行水旺，宜多接触土属性（黄色、中央）和木属性（绿色、东方）来平衡。增强行动力，避免过度思考。"
+                }
+            };
+            
+            const content = contents[dominantWuxing];
+            
+            document.getElementById('personality-detail').innerHTML = content.traits.map((trait, i) => {
+                const colors = ['yellow', 'pink', 'blue', 'green'];
+                const labels = ['元神属性', '情感模式', '思维模式', '行为特征'];
+                return `<div class="p-2 bg-white/5 rounded border-l-2 border-${colors[i]}-500/50"><strong class="text-${colors[i]}-400 text-xs block mb-1">${labels[i]}</strong>${trait}</div>`;
+            }).join('');
+            
+            document.getElementById('relationship-fortune').innerHTML = `
+                <div class="flex items-start space-x-2"><span class="text-lg">🌸</span><div><strong class="text-yellow-400 text-xs block">春（相识期）</strong><p class="text-xs">寅卯月桃花旺，易在春季或东方位相遇。</p></div></div>
+                <div class="flex items-start space-x-2"><span class="text-lg">☀️</span><div><strong class="text-yellow-400 text-xs block">夏（热恋期）</strong><p class="text-xs">巳午月火势旺，感情升温快，注意控制脾气。</p></div></div>
+                <div class="flex items-start space-x-2"><span class="text-lg">🍂</span><div><strong class="text-yellow-400 text-xs block">秋冬（稳定期）</strong><p class="text-xs">金水相生，关系趋于稳定，此时最利谈婚论嫁。</p></div></div>
+            `;
+            
+            document.getElementById('future-scenes').innerHTML = content.scenes.map((scene, i) => {
+                const colors = ['yellow', 'pink', 'indigo'];
+                return `<div class="flex items-start p-3 rounded bg-${colors[i]}-900/20 border-l-2 border-${colors[i]}-500/50"><span class="text-xl mr-3">${scene.icon}</span><div><h4 class="text-yellow-200 text-sm font-medium">${scene.title}</h4><p class="text-xs text-gray-400">${scene.desc}</p></div></div>`;
+            }).join('');
+            
+            document.getElementById('final-message').innerHTML = `
+                <p class="italic mb-3">"命由天定，运由己生。此盘显示你命中注定的伴侣，是能与你在精神层面深度共鸣之人。Ta或许不是最富有的，也不是最英俊/美丽的，但Ta懂你的沉默，包容你的敏感，在你迷茫时为你指明方向。"</p>
+                <p class="text-xs text-gray-400">${content.advice}</p>
+            `;
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            answers = new Array(20).fill(null);
+            scores = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+            
+            document.getElementById('result-page').classList.add('hidden');
+            document.getElementById('start-page').classList.remove('hidden');
+            
+            for (let i = 0; i < 4; i++) {
+                const stepEl = document.getElementById(`calc-step-${i}`);
+                stepEl.className = 'p-2 rounded bg-white/5 border border-gray-700';
+                stepEl.querySelector('div').className = 'text-gray-500';
+            }
+            
+            createNavDots();
+        }
+
+        function saveResult() {
+            const type = document.getElementById('destiny-type').textContent;
+            const poem = document.getElementById('destiny-poem').textContent;
+            const date = document.getElementById('result-date').textContent;
+            
+            const resultText = `【命理姻缘测试报告】
+生成时间：${date}
+命格：${type}
+签诗：${poem}
+
+【命主特征】
+${document.getElementById('user-traits').textContent}
+
+【伴侣命格】
+${document.getElementById('partner-destiny').textContent}
+
+此报告由命理姻缘测试系统生成，仅供娱乐参考。
+真挚的感情需要用心经营，祝天下有情人终成眷属！`;
+            
+            const blob = new Blob([resultText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `命理姻缘报告_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('命书已下载保存！');
+        }
+
+        // 键盘支持
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('quiz-page').classList.contains('hidden')) return;
+            
+            if (e.key === 'ArrowLeft' && currentQuestion > 0) {
+                prevQuestion();
+            } else if (e.key === 'ArrowRight' && answers[currentQuestion] !== null) {
+                nextQuestion();
+            } else if (['1', '2', '3', '4'].includes(e.key)) {
+                const idx = parseInt(e.key) - 1;
+                if (idx < questions[currentQuestion].options.length) {
+                    selectOption(idx);
+                }
+            }
+        });
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>
