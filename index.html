@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>灵魂发酵实验室 · 专属检测</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>灵魂发酵实验室 · 专属检测 | 单次发酵鉴定</title>
     <style>
         * {
             margin: 0;
@@ -520,8 +520,8 @@
     </style>
 </head>
 <body>
-    <!-- 封面 -->
     <div class="container">
+        <!-- 封面 -->
         <div class="cover" id="cover">
             <div class="pixel-bubble"></div>
             <div class="pixel-bubble"></div>
@@ -583,17 +583,17 @@
                 
                 <div class="result-advice" id="resultAdvice"></div>
                 
-                <button id="restartBtn">再来一次</button>
+                <button id="shareResultBtn" class="share-button">📤 分享我的发酵诊断书</button>
             </div>
             
             <p style="margin-top: 20px; color: #666; font-size: 0.9em;">
-                测出你的灵魂发酵诊断书，看看谁和你是同款发酵菌群～
+                🌿 灵魂发酵仅此一次，你的专属诊断已存档，无法再次测试。
             </p>
         </div>
     </div>
 
     <script>
-        // 测试题目数据
+        // ======================= 题库 (保持不变) =======================
         const questions = [
             "每天早上你需要多久才能完全清醒？",
             "日常作息是否规律？",
@@ -627,7 +627,6 @@
             "睡前状态如何？"
         ];
 
-        // 选项数据
         const options = [
             ["至少半小时，慢慢开机，醒了也蔫蔫的", "10-20分钟，正常清醒，无明显不适", "5分钟内瞬间清醒，立马充满精神", "醒了也昏昏沉沉，半天缓不过来"],
             ["极其规律，早睡早起，雷打不动", "基本规律，偶尔熬夜/赖床", "作息飘忽，想睡就睡，想起就起", "长期熬夜，作息混乱，白天补觉"],
@@ -661,161 +660,30 @@
             ["快速入睡，睡眠安稳，无多梦情况", "正常入睡，偶尔多梦，睡眠质量尚可", "入睡困难，思绪活跃，越晚越清醒", "失眠多梦，睡眠浅，易醒，睡眠极差"]
         ];
 
+        // ---------- 存储key ----------
+        const STORAGE_COMPLETED = "soul_ferment_completed";
+        const STORAGE_RESULT = "soul_ferment_result";
+        const STORAGE_ANSWERS = "soul_ferment_answers";
+        const STORAGE_CURRENT_Q = "soul_ferment_current_q";
+
         let currentQuestion = 0;
         let answers = new Array(30).fill(null);
+        let isCompleted = false;      // 全局已完成标志
 
-        // 初始化问卷
-        function initQuestionnaire() {
-            const container = document.getElementById('questionsContainer');
-            container.innerHTML = '';
-            
-            for (let i = 0; i < questions.length; i++) {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.id = `question-${i}`;
-                
-                questionDiv.innerHTML = `
-                    <h3>${i + 1}. ${questions[i]}</h3>
-                    <div class="options">
-                        <div class="option" data-question="${i}" data-option="0">A. ${options[i][0]}</div>
-                        <div class="option" data-question="${i}" data-option="1">B. ${options[i][1]}</div>
-                        <div class="option" data-question="${i}" data-option="2">C. ${options[i][2]}</div>
-                        <div class="option" data-question="${i}" data-option="3">D. ${options[i][3]}</div>
-                    </div>
-                `;
-                
-                container.appendChild(questionDiv);
-            }
-            
-            // 为所有选项添加点击事件监听器
-            const allOptions = document.querySelectorAll('.option');
-            allOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    const questionIndex = parseInt(this.getAttribute('data-question'));
-                    const optionIndex = parseInt(this.getAttribute('data-option'));
-                    selectOption(questionIndex, optionIndex);
-                });
-            });
-            
-            // 显示第一个问题
-            document.getElementById('question-0').classList.add('active');
-        }
+        // DOM 元素
+        const coverDiv = document.getElementById('cover');
+        const questionnaireDiv = document.getElementById('questionnaire');
+        const loadingDiv = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+        const startBtn = document.getElementById('startBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const shareBtn = document.getElementById('shareResultBtn');
 
-        // 开始测试函数
-        function startTest() {
-            document.getElementById('cover').style.display = 'none';
-            document.getElementById('questionnaire').style.display = 'block';
-            updateProgress();
-            updateNavButtons();
-        }
-
-        function selectOption(questionIndex, optionIndex) {
-            answers[questionIndex] = optionIndex;
-            
-            // 更新选项样式
-            const questionEl = document.getElementById(`question-${questionIndex}`);
-            const options = questionEl.querySelectorAll('.option');
-            options.forEach((opt, idx) => {
-                if (parseInt(opt.getAttribute('data-option')) === optionIndex) {
-                    opt.classList.add('selected');
-                } else {
-                    opt.classList.remove('selected');
-                }
-            });
-            
-            updateProgress();
-            updateNavButtons();
-        }
-
-        function updateProgress() {
-            const answered = answers.filter(a => a !== null).length;
-            const percentage = (answered / 30) * 100;
-            document.getElementById('progressFill').style.width = `${percentage}%`;
-        }
-
-        function updateNavButtons() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            
-            prevBtn.disabled = currentQuestion === 0;
-            nextBtn.textContent = currentQuestion === 29 ? '提交测试' : '下一题';
-            
-            // 如果当前题目未回答，禁用下一题按钮
-            if (answers[currentQuestion] === null) {
-                nextBtn.disabled = true;
-            } else {
-                nextBtn.disabled = false;
-            }
-        }
-
-        function nextQuestion() {
-            if (currentQuestion < 29) {
-                // 隐藏当前问题
-                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
-                currentQuestion++;
-                // 显示下一个问题
-                document.getElementById(`question-${currentQuestion}`).classList.add('active');
-                updateNavButtons();
-            } else {
-                // 提交测试
-                submitTest();
-            }
-        }
-
-        function prevQuestion() {
-            if (currentQuestion > 0) {
-                // 隐藏当前问题
-                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
-                currentQuestion--;
-                // 显示上一个问题
-                document.getElementById(`question-${currentQuestion}`).classList.add('active');
-                updateNavButtons();
-            }
-        }
-
-        function submitTest() {
-            // 检查是否所有题目都已回答
-            if (answers.some(a => a === null)) {
-                alert('请完成所有题目后再提交！');
-                return;
-            }
-            
-            // 显示加载页面
-            document.getElementById('questionnaire').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            
-            // 随机加载文案
-            const loadingTexts = [
-                "正在连接银河系微生物数据库...",
-                "正在提取你的灵魂DNA样本...",
-                "正在询问你的专属守护星...",
-                "正在监测灵魂发酵温度...",
-                "正在筛查情绪菌群活性...",
-                "正在校准精神发酵刻度...",
-                "正在召唤发酵菌小精灵...",
-                "正在破解灵魂发酵密码..."
-            ];
-            
-            let textIndex = 0;
-            const loadingInterval = setInterval(() => {
-                document.getElementById('loadingText').textContent = loadingTexts[textIndex];
-                textIndex = (textIndex + 1) % loadingTexts.length;
-            }, 2000);
-            
-            // 计算分数并显示结果
-            setTimeout(() => {
-                clearInterval(loadingInterval);
-                calculateResult();
-            }, 5000);
-        }
-
-        function calculateResult() {
-            // 计算总分 (A=1, B=2, C=3, D=4)
-            const totalScore = answers.reduce((sum, answer) => sum + (answer + 1), 0);
-            
-            // 确定结果类型
+        // ========== 辅助函数: 计算得分 & 生成结果对象 ==========
+        function computeResultFromAnswers(answerArray) {
+            const totalScore = answerArray.reduce((sum, ans) => sum + (ans + 1), 0);
             let resultData = {};
-            
             if (totalScore >= 30 && totalScore <= 50) {
                 resultData = {
                     type: "你是「老菌陈酿型」灵魂",
@@ -845,46 +713,320 @@
                     advice: "适合做创意创作者、情绪观察者、最懂他人的共情小天使"
                 };
             }
-            
-            // 更新结果页面
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            return { ...resultData, randomNumber: randomNum };
+        }
+
+        // 保存未完成进度 (答案 + 当前题号)
+        function saveUnfinishedProgress() {
+            localStorage.setItem(STORAGE_ANSWERS, JSON.stringify(answers));
+            localStorage.setItem(STORAGE_CURRENT_Q, currentQuestion);
+        }
+
+        // 清除未完成进度 (提交后或者重置时)
+        function clearUnfinishedProgress() {
+            localStorage.removeItem(STORAGE_ANSWERS);
+            localStorage.removeItem(STORAGE_CURRENT_Q);
+        }
+
+        // 保存完成状态 (结果 + 完成标志)
+        function saveCompletedState(resultData) {
+            localStorage.setItem(STORAGE_COMPLETED, 'true');
+            localStorage.setItem(STORAGE_RESULT, JSON.stringify(resultData));
+            clearUnfinishedProgress();  // 完成时删除未完成草稿
+        }
+
+        // 加载已完成的结果，并直接展示结果页面
+        function loadCompletedAndShow() {
+            const storedResult = localStorage.getItem(STORAGE_RESULT);
+            if (storedResult) {
+                const result = JSON.parse(storedResult);
+                displayResultOnPage(result);
+            } else {
+                // 极少数异常: 标志完成但无结果，重新生成默认
+                const fallback = { type: "灵魂发酵档案", status: "未知状态", traits: "请重新尝试", advice: "联系实验室", randomNumber: "9999" };
+                displayResultOnPage(fallback);
+            }
+            // 显示结果，隐藏其他
+            coverDiv.style.display = 'none';
+            questionnaireDiv.style.display = 'none';
+            loadingDiv.style.display = 'none';
+            resultDiv.style.display = 'block';
+            isCompleted = true;
+        }
+
+        // 渲染结果到页面
+        function displayResultOnPage(resultData) {
             document.getElementById('resultType').textContent = resultData.type;
             document.getElementById('resultStatus').innerHTML = `<strong>发酵状态：</strong>${resultData.status}`;
             document.getElementById('resultTraits').innerHTML = `<strong>特质描述：</strong>${resultData.traits}`;
             document.getElementById('resultAdvice').innerHTML = `<strong>适配定位：</strong>${resultData.advice}`;
-            
-            // 生成随机编号
-            document.getElementById('randomNumber').textContent = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('randomNumber').textContent = resultData.randomNumber;
         }
 
-        function restartTest() {
-            currentQuestion = 0;
-            answers = new Array(30).fill(null);
-            document.getElementById('result').style.display = 'none';
-            document.getElementById('cover').style.display = 'block';
+        // 提交最终结果 (动画 + 存储)
+        function submitFinalResult() {
+            if (isCompleted) return;
+            // 再次检查完整性
+            if (answers.some(a => a === null)) {
+                alert('请完成所有题目后再提交！');
+                return;
+            }
+            // 显示加载动画
+            questionnaireDiv.style.display = 'none';
+            loadingDiv.style.display = 'block';
             
-            // 重置所有选项选择状态
+            const loadingTexts = [
+                "正在连接银河系微生物数据库...",
+                "正在提取你的灵魂DNA样本...",
+                "正在询问你的专属守护星...",
+                "正在监测灵魂发酵温度...",
+                "正在筛查情绪菌群活性...",
+                "正在校准精神发酵刻度...",
+                "正在召唤发酵菌小精灵...",
+                "正在破解灵魂发酵密码..."
+            ];
+            let textIndex = 0;
+            const loadingInterval = setInterval(() => {
+                document.getElementById('loadingText').textContent = loadingTexts[textIndex];
+                textIndex = (textIndex + 1) % loadingTexts.length;
+            }, 2000);
+            
+            setTimeout(() => {
+                clearInterval(loadingInterval);
+                // 计算结果并存储
+                const finalResult = computeResultFromAnswers(answers);
+                saveCompletedState(finalResult);
+                isCompleted = true;
+                loadingDiv.style.display = 'none';
+                displayResultOnPage(finalResult);
+                resultDiv.style.display = 'block';
+            }, 5000);
+        }
+
+        // 恢复未完成进度 (从localStorage加载answers, currentQuestion)
+        function loadUnfinishedAndResume() {
+            const savedAnswers = localStorage.getItem(STORAGE_ANSWERS);
+            const savedQ = localStorage.getItem(STORAGE_CURRENT_Q);
+            if (savedAnswers) {
+                try {
+                    const parsed = JSON.parse(savedAnswers);
+                    if (Array.isArray(parsed) && parsed.length === 30) {
+                        answers = parsed;
+                    }
+                } catch(e) {}
+            }
+            if (savedQ !== null && !isNaN(parseInt(savedQ))) {
+                currentQuestion = parseInt(savedQ);
+                if (currentQuestion < 0) currentQuestion = 0;
+                if (currentQuestion >= 30) currentQuestion = 29;
+            }
+            // 重新渲染DOM并高亮选中项
+            renderQuestionsWithSelections();
+            // 显示问卷区域，隐藏封面和结果
+            coverDiv.style.display = 'none';
+            questionnaireDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            loadingDiv.style.display = 'none';
+            // 激活当前问题
+            document.querySelectorAll('.question').forEach((q, idx) => {
+                if (idx === currentQuestion) q.classList.add('active');
+                else q.classList.remove('active');
+            });
+            updateProgress();
+            updateNavButtons();
+        }
+
+        // 渲染所有题目，并根据answers恢复选中样式
+        function renderQuestionsWithSelections() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `question-${i}`;
+                questionDiv.innerHTML = `
+                    <h3>${i + 1}. ${questions[i]}</h3>
+                    <div class="options">
+                        <div class="option" data-question="${i}" data-option="0">A. ${options[i][0]}</div>
+                        <div class="option" data-question="${i}" data-option="1">B. ${options[i][1]}</div>
+                        <div class="option" data-question="${i}" data-option="2">C. ${options[i][2]}</div>
+                        <div class="option" data-question="${i}" data-option="3">D. ${options[i][3]}</div>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            }
+            // 重新绑定选项事件，并恢复已选样式
             const allOptions = document.querySelectorAll('.option');
-            allOptions.forEach(opt => opt.classList.remove('selected'));
-            
-            // 显示第一个问题
-            const allQuestions = document.querySelectorAll('.question');
-            allQuestions.forEach(q => q.classList.remove('active'));
-            document.getElementById('question-0').classList.add('active');
+            allOptions.forEach(opt => {
+                const qIdx = parseInt(opt.getAttribute('data-question'));
+                const optIdx = parseInt(opt.getAttribute('data-option'));
+                if (answers[qIdx] === optIdx) {
+                    opt.classList.add('selected');
+                }
+                opt.addEventListener('click', (e) => {
+                    if (isCompleted) return;
+                    const qIndex = parseInt(opt.getAttribute('data-question'));
+                    const oIndex = parseInt(opt.getAttribute('data-option'));
+                    selectOptionHandler(qIndex, oIndex);
+                });
+            });
         }
 
-        // 页面加载完成后初始化
-        window.onload = function() {
-            // 初始化问卷
-            initQuestionnaire();
-            
-            // 添加事件监听器
-            document.getElementById('startBtn').addEventListener('click', startTest);
-            document.getElementById('prevBtn').addEventListener('click', prevQuestion);
-            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
-            document.getElementById('restartBtn').addEventListener('click', restartTest);
-        };
+        // 处理选项点击
+        function selectOptionHandler(questionIndex, optionIndex) {
+            if (isCompleted) return;
+            answers[questionIndex] = optionIndex;
+            // 更新UI选中样式
+            const questionEl = document.getElementById(`question-${questionIndex}`);
+            const opts = questionEl.querySelectorAll('.option');
+            opts.forEach(opt => {
+                const val = parseInt(opt.getAttribute('data-option'));
+                if (val === optionIndex) opt.classList.add('selected');
+                else opt.classList.remove('selected');
+            });
+            updateProgress();
+            updateNavButtons();
+            // 保存进度
+            saveUnfinishedProgress();
+        }
+
+        function updateProgress() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const percent = (answeredCount / 30) * 100;
+            document.getElementById('progressFill').style.width = `${percent}%`;
+        }
+
+        function updateNavButtons() {
+            if (isCompleted) return;
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+            prev.disabled = (currentQuestion === 0);
+            next.textContent = (currentQuestion === 29) ? '提交测试' : '下一题';
+            if (answers[currentQuestion] === null) {
+                next.disabled = true;
+            } else {
+                next.disabled = false;
+            }
+        }
+
+        function nextQuestion() {
+            if (isCompleted) return;
+            if (currentQuestion < 29) {
+                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
+                currentQuestion++;
+                document.getElementById(`question-${currentQuestion}`).classList.add('active');
+                updateNavButtons();
+                saveUnfinishedProgress();  // 移动后保存当前进度
+            } else {
+                // 提交
+                submitFinalResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (isCompleted) return;
+            if (currentQuestion > 0) {
+                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
+                currentQuestion--;
+                document.getElementById(`question-${currentQuestion}`).classList.add('active');
+                updateNavButtons();
+                saveUnfinishedProgress();
+            }
+        }
+
+        // 全新开始测试 (清除所有旧存储，开始新问卷) — 仅用于未完成状态下的重置
+        function freshStartTest() {
+            if (isCompleted) {
+                alert("你已经完成过灵魂发酵检测，无法再次测试。\n每颗灵魂只能发酵一次✨");
+                return;
+            }
+            // 清空之前所有进度
+            localStorage.removeItem(STORAGE_ANSWERS);
+            localStorage.removeItem(STORAGE_CURRENT_Q);
+            localStorage.removeItem(STORAGE_COMPLETED);
+            localStorage.removeItem(STORAGE_RESULT);
+            answers = new Array(30).fill(null);
+            currentQuestion = 0;
+            isCompleted = false;
+            // 重新渲染干净问卷
+            renderQuestionsWithSelections();
+            coverDiv.style.display = 'none';
+            questionnaireDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            loadingDiv.style.display = 'none';
+            document.querySelectorAll('.question').forEach((q, idx) => {
+                if (idx === 0) q.classList.add('active');
+                else q.classList.remove('active');
+            });
+            updateProgress();
+            updateNavButtons();
+            saveUnfinishedProgress();
+        }
+
+        // 分享功能（替代再来一次）
+        function shareDiagnosis() {
+            const typeText = document.getElementById('resultType')?.innerText || "灵魂发酵档案";
+            const statusText = document.getElementById('resultStatus')?.innerText || "";
+            const traitsText = document.getElementById('resultTraits')?.innerText || "";
+            const shareContent = `【灵魂发酵实验室】我的发酵诊断书：${typeText}\n${statusText}\n${traitsText}\n—— 灵魂只能发酵一次，独一无二。`;
+            if (navigator.share) {
+                navigator.share({ title: '灵魂发酵诊断书', text: shareContent }).catch(() => alert("分享取消"));
+            } else {
+                navigator.clipboard.writeText(shareContent).then(() => alert("诊断书已复制，快分享给朋友吧~"));
+            }
+        }
+
+        // 初始化页面逻辑 (判断已完成 / 未完成)
+        function initApp() {
+            const completedFlag = localStorage.getItem(STORAGE_COMPLETED) === 'true';
+            if (completedFlag) {
+                // 已经完成测试 → 直接显示结果
+                isCompleted = true;
+                loadCompletedAndShow();
+                return;
+            }
+            // 未完成 → 检查是否存在未完成答案草稿
+            const savedAnswers = localStorage.getItem(STORAGE_ANSWERS);
+            if (savedAnswers) {
+                // 有未完成记录，直接恢复进度并展示问卷 (跳过封面)
+                loadUnfinishedAndResume();
+            } else {
+                // 无任何记录，显示封面，等待用户开始
+                coverDiv.style.display = 'block';
+                questionnaireDiv.style.display = 'none';
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'none';
+                isCompleted = false;
+                answers = new Array(30).fill(null);
+                currentQuestion = 0;
+                // 预先生成干净DOM但不显示
+                renderQuestionsWithSelections();
+            }
+        }
+
+        // 事件绑定
+        startBtn.addEventListener('click', () => {
+            // 如果已经完成，不能开始
+            if (localStorage.getItem(STORAGE_COMPLETED) === 'true') {
+                alert("您已完成灵魂发酵检测，无法再次测试。\n每份灵魂诊断都是唯一的。");
+                return;
+            }
+            // 如果有未完成进度则继续；否则全新开始
+            const hasUnfinished = localStorage.getItem(STORAGE_ANSWERS) !== null;
+            if (hasUnfinished) {
+                loadUnfinishedAndResume();
+            } else {
+                freshStartTest();
+            }
+        });
+
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', nextQuestion);
+        shareBtn.addEventListener('click', shareDiagnosis);
+
+        // 启动
+        initApp();
     </script>
 </body>
 </html>
