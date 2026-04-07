@@ -2,8 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>灵魂发酵实验室 · 专属检测 | 单次发酵鉴定</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>搞钱天赋探测仪 | 财富DNA心理测试</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,1021 +14,736 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* 全局背景装饰 */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(78, 205, 196, 0.1) 1px, transparent 1px),
-                radial-gradient(circle at 80% 70%, rgba(255, 107, 107, 0.1) 1px, transparent 1px),
-                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
-            background-size: 80px 80px;
-            z-index: -1;
+            background: #f5f7fb;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 24px 16px 64px;
+            color: #1e293b;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-            position: relative;
         }
 
-        /* 封面样式 */
-        .cover {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            color: white;
+        .card {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 4px 8px rgba(0, 0, 0, 0.03);
+            padding: 28px 24px;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+            border: 1px solid #eef2f6;
+        }
+
+        .hero {
             text-align: center;
-            padding: 40px 20px;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #fafcff 100%);
+            border-bottom: 2px solid #e9edf2;
         }
 
-        .cover::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.3"/><circle cx="80" cy="40" r="1.5" fill="white" opacity="0.3"/><circle cx="40" cy="80" r="2.5" fill="white" opacity="0.3"/></svg>');
-            opacity: 0.3;
+        .hero h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1f3b3c, #2b5e5f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
         }
 
-        .cover h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 2;
+        .hero .sub {
+            color: #5b6e8c;
+            font-size: 0.95rem;
+            margin-top: 6px;
+            border-top: 1px solid #ecf3f9;
+            display: inline-block;
+            padding-top: 12px;
         }
 
-        .cover h2 {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 2;
+        .badge {
+            background: #eef3fc;
+            color: #2c6e6f;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 16px;
+            font-weight: 500;
         }
 
-        .cover p {
-            font-size: 1em;
-            position: relative;
-            line-height: 1.6;
-            z-index: 2;
+        .question-item {
+            margin-bottom: 28px;
+            border-bottom: 1px solid #eff3f8;
+            padding-bottom: 20px;
         }
 
-        /* 8bit像素风元素 - 发酵气泡 */
-        .pixel-bubble {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            animation: float 3s ease-in-out infinite;
-            z-index: 1;
+        .q-text {
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.4;
+            margin-bottom: 14px;
+            color: #0f172a;
         }
 
-        .pixel-bubble:nth-child(1) { top: 20%; left: 10%; }
-        .pixel-bubble:nth-child(2) { top: 60%; right: 15%; }
-        .pixel-bubble:nth-child(3) { bottom: 30%; left: 25%; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        .q-num {
+            display: inline-block;
+            background: #eef2ff;
+            color: #2c6e6f;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 12px;
+            margin-right: 10px;
         }
 
-        /* 问卷样式 */
-        .questionnaire {
+        .rating-group {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            flex: 1;
+            text-align: center;
+            min-width: 52px;
+        }
+
+        .rating-option input {
             display: none;
-            padding: 30px;
-            background: #fafafa;
         }
 
-        .question {
-            background: white;
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #4ecdc4;
-            display: none;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
-        }
-
-        .question.active {
+        .rating-option label {
             display: block;
-            animation: fadeIn 0.3s ease-in;
+            background: #f8fafd;
+            border-radius: 40px;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4b5e7c;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            text-align: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .rating-option input:checked + label {
+            background: #2c6e6f;
+            border-color: #2c6e6f;
+            color: white;
+            box-shadow: 0 2px 6px rgba(44,110,111,0.2);
         }
 
-        .question h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 1.1em;
-            position: relative;
-            padding-left: 15px;
+        .rating-option label:hover {
+            background: #eef2f9;
+            border-color: #cbd5e1;
         }
 
-        .question h3::before {
-            content: '•';
-            color: #ff6b6b;
-            position: absolute;
-            left: 0;
-            top: 0;
+        .btn {
+            background: #2c6e6f;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+            font-family: inherit;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .options {
-            display: grid;
+        .btn:disabled {
+            background: #b9c5ca;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .report-card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 28px 24px;
+            margin-top: 24px;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+        }
+
+        .talent-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 12px 0 8px;
+            background: linear-gradient(120deg, #1e3b3c, #2f7e7a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .dimension-tag {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #2c6e6f;
+            border-radius: 30px;
+            padding: 4px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 12px;
+        }
+
+        .radar-container {
+            max-width: 280px;
+            margin: 16px auto;
+        }
+
+        .insight-box {
+            background: #f9fbfe;
+            padding: 18px;
+            border-radius: 24px;
+            margin: 20px 0;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #eef2f8;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 12px;
         }
 
-        .option {
-            background: white;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
+        .score-badge {
+            background: #eef2ff;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
-        .option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(78, 205, 196, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .option:hover::before {
-            left: 100%;
-        }
-
-        .option:hover {
-            border-color: #4ecdc4;
-            background: #f0fff4;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.1);
-        }
-
-        .option.selected {
-            border-color: #ff6b6b;
-            background: #ffebee;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            margin: 20px 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4ecdc4, #ff6b6b);
-            width: 0%;
-            transition: width 0.3s;
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 8px;
-            height: 100%;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255,255,255,0.8);
-        }
-
-        .nav-buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        button {
-            background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 0 10px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        button:hover::before {
-            left: 100%;
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* 加载页面 */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 50px 20px;
-            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .loading::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="1" fill="%234ecdc4" opacity="0.2"/><circle cx="90" cy="30" r="1.5" fill="%23ff6b6b" opacity="0.2"/><circle cx="30" cy="70" r="0.8" fill="%234ecdc4" opacity="0.2"/></svg>');
-            opacity: 0.3;
-        }
-
-        .loading-animation {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .loading-dot {
-            width: 12px;
-            height: 12px;
-            background: #ff6b6b;
-            border-radius: 50%;
-            position: absolute;
-            animation: loading-pulse 1.4s infinite ease-in-out both;
-        }
-
-        .loading-dot:nth-child(1) { left: 8px; animation-delay: -0.32s; }
-        .loading-dot:nth-child(2) { left: 8px; animation-delay: -0.16s; }
-        .loading-dot:nth-child(3) { left: 32px; animation-delay: 0s; }
-
-        @keyframes loading-pulse {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
-
-        .loading-text {
-            font-size: 1.2em;
-            color: #666;
-            margin-top: 20px;
-            z-index: 1;
-            position: relative;
-        }
-
-        /* 结果页面 */
-        .result {
-            display: none;
-            padding: 30px;
-            text-align: center;
-            background: linear-gradient(135deg, #fff8f0 0%, #f0fff8 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .result::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1.5" fill="%23ff6b6b" opacity="0.1"/><circle cx="80" cy="60" r="1" fill="%234ecdc4" opacity="0.1"/><circle cx="50" cy="80" r="1.2" fill="%23ff6b6b" opacity="0.1"/></svg>');
-            opacity: 0.3;
-        }
-
-        .diagnosis-card {
-            background: white;
-            border: 3px dashed #d2691e;
-            padding: 30px;
-            border-radius: 15px;
-            position: relative;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(210, 105, 30, 0.1);
-            z-index: 1;
-        }
-
-        .diagnosis-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 3px dashed rgba(210, 105, 30, 0.2);
-            border-radius: 15px;
-            margin: 5px;
+        .disabled-overlay {
+            opacity: 0.7;
             pointer-events: none;
         }
 
-        .diagnosis-header {
-            border-bottom: 2px solid #d2691e;
-            padding-bottom: 15px;
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8b9ab0;
+            margin-top: 32px;
+        }
+
+        .lock-message {
+            background: #fef9e6;
+            border-left: 4px solid #e6b422;
+            padding: 12px 16px;
+            border-radius: 20px;
             margin-bottom: 20px;
-            position: relative;
+            font-size: 0.85rem;
+            color: #7a6300;
         }
 
-        .diagnosis-number {
-            font-size: 0.9em;
-            color: #d2691e;
-            margin-bottom: 5px;
-        }
-
-        .diagnosis-title {
-            font-size: 1.3em;
-            color: #d2691e;
-            font-weight: bold;
-        }
-
-        .result-type {
-            font-size: 1.5em;
-            color: #ff6b6b;
-            margin: 15px 0;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .result-status {
-            background: #fff8dc;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: left;
-            border-left: 4px solid #d2691e;
-        }
-
-        .result-traits {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: left;
-            border-left: 4px solid #4ecdc4;
-        }
-
-        .result-advice {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: left;
-            border-left: 4px solid #4ecdc4;
-        }
-
-        .share-button {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            margin-top: 20px;
-        }
-
-        .pixel-microbe {
-            width: 80px;
-            height: 80px;
-            margin: 20px auto;
-            position: relative;
-        }
-
-        .microbe-body {
-            width: 60px;
-            height: 60px;
-            background: #4ecdc4;
-            border-radius: 50%;
-            position: relative;
-            margin: 0 auto;
-            animation: microbeFloat 3s ease-in-out infinite;
-        }
-
-        @keyframes microbeFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .microbe-eye {
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 20px;
-        }
-
-        .microbe-eye.left { left: 15px; }
-        .microbe-eye.right { right: 15px; }
-
-        .microbe-mouth {
-            width: 20px;
-            height: 10px;
-            background: white;
-            border-radius: 0 0 10px 10px;
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .bubble {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: rgba(255,255,255,0.7);
-            border: 2px solid white;
-            border-radius: 50%;
-            animation: bubbleFloat 3s ease-in-out infinite;
-        }
-
-        .bubble.b1 { top: -10px; left: 10px; animation-delay: 0s; }
-        .bubble.b2 { top: -5px; right: 15px; animation-delay: 0.5s; }
-        .bubble.b3 { bottom: -8px; left: 20px; animation-delay: 1s; }
-
-        @keyframes bubbleFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 600px) {
-            .cover h1 {
-                font-size: 2em;
+        @media (max-width: 560px) {
+            .card {
+                padding: 20px 16px;
             }
-            
-            .cover h2 {
-                font-size: 1em;
+            .rating-option label {
+                font-size: 0.75rem;
+                padding: 6px 0;
             }
-            
-            .questionnaire, .loading, .result {
-                padding: 20px 15px;
-            }
-            
-            .option {
-                padding: 12px;
-                font-size: 0.9em;
+            .q-text {
+                font-size: 0.95rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 封面 -->
-        <div class="cover" id="cover">
-            <div class="pixel-bubble"></div>
-            <div class="pixel-bubble"></div>
-            <div class="pixel-bubble"></div>
-            <h1>🧪 灵魂发酵实验室</h1>
-            <h2>你的灵魂正在悄悄发酵？测测发酵到第几层了！</h2>
-            <p>每个人的灵魂都是一罐待发酵的食材，作息是温度，情绪是菌群，藏着不为人知的发酵状态。<br/>30道题，全看你的日常本能反应，生成专属灵魂发酵诊断书～</p>
-            <button id="startBtn">开始测试</button>
-        </div>
-
-        <!-- 问卷 -->
-        <div class="questionnaire" id="questionnaire">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div id="questionsContainer"></div>
-            <div class="nav-buttons">
-                <button id="prevBtn" disabled>上一题</button>
-                <button id="nextBtn">下一题</button>
-            </div>
-        </div>
-
-        <!-- 加载页面 -->
-        <div class="loading" id="loading">
-            <div class="loading-animation">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            </div>
-            <div class="loading-text" id="loadingText">正在连接银河系微生物数据库...</div>
-        </div>
-
-        <!-- 结果页面 -->
-        <div class="result" id="result">
-            <div class="pixel-microbe">
-                <div class="microbe-body">
-                    <div class="microbe-eye left"></div>
-                    <div class="microbe-eye right"></div>
-                    <div class="microbe-mouth"></div>
-                    <div class="bubble b1"></div>
-                    <div class="bubble b2"></div>
-                    <div class="bubble b3"></div>
-                </div>
-            </div>
-            
-            <div class="diagnosis-card">
-                <div class="diagnosis-header">
-                    <div class="diagnosis-number">编号：SL-FJ-<span id="randomNumber">0001</span></div>
-                    <div class="diagnosis-title">灵魂发酵实验室检测诊断书</div>
-                    <div>检测项目：灵魂发酵程度、菌群类型判定</div>
-                    <div>检测状态：已完成</div>
-                </div>
-                
-                <div class="result-type" id="resultType"></div>
-                
-                <div class="result-status" id="resultStatus"></div>
-                
-                <div class="result-traits" id="resultTraits"></div>
-                
-                <div class="result-advice" id="resultAdvice"></div>
-                
-                <button id="shareResultBtn" class="share-button">📤 分享我的发酵诊断书</button>
-            </div>
-            
-            <p style="margin-top: 20px; color: #666; font-size: 0.9em;">
-                🌿 灵魂发酵仅此一次，你的专属诊断已存档，无法再次测试。
-            </p>
-        </div>
+<div class="container">
+    <div class="card hero">
+        <div class="badge">🧠 心理测评 · 单次有效</div>
+        <h1>💸 搞钱天赋探测仪</h1>
+        <p style="margin-top: 8px; color: #475569;">你的财富DNA是什么？25题精准定位你的搞钱优势</p>
+        <div class="sub">基于大五人格 & 创业人格维度 · 约4分钟 · 每人仅可测评一次</div>
     </div>
 
-    <script>
-        // ======================= 题库 (保持不变) =======================
-        const questions = [
-            "每天早上你需要多久才能完全清醒？",
-            "日常作息是否规律？",
-            "压力来袭时，你的第一情绪反应是？",
-            "熬夜后的次日状态如何？",
-            "面对喜欢的事物，你的投入状态是？",
-            "被他人批评误解时，你会？",
-            "日常吃饭的节奏是？",
-            "计划突然被打乱，你的感受是？",
-            "独处时你的状态是？",
-            "身处热闹人群中，你会？",
-            "做事的启动速度怎么样？",
-            "生气时的表现是？",
-            "遇到开心小事（糖分），你的反应是？",
-            "疲惫时的休息方式是？",
-            "面对突如其来的机会，你会？",
-            "日常情绪波动频率如何？",
-            "对陌生环境的适应速度？",
-            "处理负面情绪的方式是？",
-            "在团队中你更偏向？",
-            "对改变的接受程度？",
-            "每天的精神状态峰值在？",
-            "看到他人成功，你的心态是？",
-            "做事是否有拖延习惯？",
-            "遇到困难时，你会？",
-            "日常是否喜欢吃甜食/发酵类食物？",
-            "与人相处的边界感如何？",
-            "空闲时间更愿意做什么？",
-            "被人夸奖时， your reaction is？",
-            "面对未来，你的心态是？",
-            "睡前状态如何？"
-        ];
+    <!-- 测试表单区（动态渲染） -->
+    <div class="card" id="testArea">
+        <div style="margin-bottom: 12px; font-weight: 500;">📋 请根据真实感受评分 (1=非常不符合 → 5=非常符合)</div>
+        <form id="quizForm"></form>
+        <button class="btn" id="submitBtn">✨ 生成我的搞钱报告</button>
+    </div>
 
-        const options = [
-            ["至少半小时，慢慢开机，醒了也蔫蔫的", "10-20分钟，正常清醒，无明显不适", "5分钟内瞬间清醒，立马充满精神", "醒了也昏昏沉沉，半天缓不过来"],
-            ["极其规律，早睡早起，雷打不动", "基本规律，偶尔熬夜/赖床", "作息飘忽，想睡就睡，想起就起", "长期熬夜，作息混乱，白天补觉"],
-            ["毫无波澜，慢慢消化，不慌不忙", "短暂焦虑，很快调整，正常应对", "瞬间亢奋，越压越拼，爆发力拉满", "极度烦躁，情绪低落，久久无法平复"],
-            ["轻微疲惫，补觉后立马恢复", "有点累，不影响正常工作学习", "越熬越精神，晚上亢奋白天不困", "头痛乏力，情绪敏感，极易崩溃"],
-            ["慢慢喜欢，细水长流，不温不火", "正常投入，节奏平稳，适度痴迷", "瞬间上头，疯狂投入，热情爆棚", "痴迷过后陷入空虚，情绪反复"],
-            ["毫不在意，自己默默释怀，不解释", "简单澄清，不纠结，过后就忘", "当场反驳，据理力争，态度鲜明", "内心难受很久，反复内耗，自我怀疑"],
-            ["细嚼慢咽，吃饭速度极慢，享受过程", "正常速度，规律三餐，不暴饮暴食", "吃饭飞快，狼吞虎咽，喜欢趁热吃", "饥一顿饱一顿，饿了狂吃，不饿不吃"],
-            ["无所谓，顺其自然，怎么都可以", "轻微烦躁，快速调整，重新规划", "立马行动，重新制定方案，绝不拖延", "心态直接崩盘，烦躁焦虑，无法做事"],
-            ["平静放松，享受安静，内心安稳", "适度放松，刷刷手机，正常充能", "灵感爆发，突然想做很多事，闲不住", "胡思乱想，情绪泛滥，越独处越emo"],
-            ["安静旁观，不参与社交，也不觉得尴尬", "适度融入，简单交流，不累不抗拒", "主动社交，带动气氛，成为全场焦点", "待久了极度心累，只想立马逃离"],
-            ["慢热拖沓，迟迟不开始，一旦开始很稳", "按时启动，不拖延不冲动，稳步进行", "想到就做，瞬间行动，执行力超强", "犹豫不决，想太多，始终无法开始"],
-            ["不发作，闷在心里，慢慢自行消散", "来得快去得快，适当发泄，不记仇", "瞬间爆发，脾气火爆，消气也很快", "越想越气，反复纠结，记仇很久"],
-            ["淡淡开心，情绪平稳，不会过度兴奋", "正常开心，短暂愉悦，很快平复", "瞬间亢奋，整个人发光，快乐加倍", "开心过后莫名失落，情绪起伏大"],
-            ["躺着放空，一动不动，慢慢恢复", "轻度娱乐，听歌刷剧，轻松充能", "运动出汗，出门闲逛，越动越有精神", "越休息越焦虑，无法放松，疲惫加重"],
-            ["观察很久，反复考量，谨慎抉择", "评估利弊，稳妥抓住，不冒进", "毫不犹豫，立马抓住，敢闯敢拼", "害怕失败，犹豫不决，最终错过"],
-            ["极少波动，情绪始终平稳，波澜不惊", "偶尔波动，受外界影响小", "波动明显，易被外界带动，大起大落", "频繁波动，一点小事就情绪失控"],
-            ["适应很慢，需要长时间才能融入", "正常适应，慢慢熟悉，不慌不忙", "快速适应，自来熟，立马融入", "难以适应，敏感不安，极度抵触"],
-            ["自我沉淀，慢慢消化，无需他人安慰", "找人倾诉，说出来就释怀", "用行动发泄，运动、工作，转移注意力", "陷在情绪里，无法自拔，需要他人长时间安抚"],
-            ["默默做事，稳定大局，不争不抢", "配合他人，靠谱踏实，完成分内事", "主导节奏，带动团队，核心发力", "细心敏感，容易内耗，抗压能力弱"],
-            ["接受很慢，喜欢稳定，抗拒改变", "正常接受，不抗拒也不主动追求", "喜欢改变，热衷新鲜事物，勇于尝试", "害怕改变，缺乏安全感，极度抵触"],
-            ["上午，早起后精神平稳，下午渐弱", "中午到下午，状态始终均匀", "晚上，夜晚越晚越精神，状态绝佳", "无固定峰值，全天状态都很差"],
-            ["毫无波澜，专注自己，不羡慕不嫉妒", "适度羡慕，激励自己，正常看待", "瞬间斗志满满，想要努力赶超", "自我否定，焦虑自卑，情绪低落"],
-            ["极度拖延，不到最后不行动", "偶尔拖延，能按时完成", "从不拖延，提前完成，效率极高", "因焦虑拖延，越拖越焦虑"],
-            ["慢慢解决，不紧不慢，不急着出结果", "稳步解决，寻求方法，正常攻克", "迎难而上，越难越有干劲，快速解决", "退缩逃避，不敢面对，焦虑不安"],
-            ["不太喜欢，偏爱清淡原味食物", "正常接受，偶尔吃一点", "超级喜欢，甜食/发酵食品是最爱", "喜欢吃，但吃多了会情绪不适"],
-            ["边界感极强，喜欢独处，不喜打扰", "边界感适中，友好但保持距离", "边界感弱，热情主动，乐于亲近他人", "边界感模糊，敏感脆弱，易被他人影响"],
-            ["安静发呆、看书、做慢节奏的事", "做日常琐事，适度放松，不紧不慢", "尝试新鲜事，出门游玩，做有挑战的事", "无所事事，刷手机，越闲越焦虑"],
-            ["淡淡接受，不骄傲，情绪无波动", "开心感谢，适度开心，很快平复", "极度开心，充满动力，更加努力", "不好意思，怀疑自己，情绪拘谨"],
-            ["顺其自然，走一步看一步，不焦虑", "有简单规划，稳步前行，心态平和", "充满期待，目标明确，想要快速成长", "极度焦虑，担忧未来，胡思乱想"],
-            ["快速入睡，睡眠安稳，无多梦情况", "正常入睡，偶尔多梦，睡眠质量尚可", "入睡困难，思绪活跃，越晚越清醒", "失眠多梦，睡眠浅，易醒，睡眠极差"]
-        ];
+    <!-- 结果报告区 -->
+    <div id="resultArea" style="display: none;"></div>
+    <footer>基于心理学行为研究 · 结果仅供自我探索参考 · 本测试仅限作答一次</footer>
+</div>
 
-        // ---------- 存储key ----------
-        const STORAGE_COMPLETED = "soul_ferment_completed";
-        const STORAGE_RESULT = "soul_ferment_result";
-        const STORAGE_ANSWERS = "soul_ferment_answers";
-        const STORAGE_CURRENT_Q = "soul_ferment_current_q";
+<script>
+    // ---------- 25道题目 (5个维度各5题，保证均衡) ----------
+    const questions = [
+        // 风险嗅觉 (risk) 原有4题 + 新增1题
+        { text: "当朋友推荐一个“有潜力但不确定”的副业项目时，我会先主动深入了解，而不是直接拒绝。", dim: "risk" },
+        { text: "面对一笔10万元的投资机会，我能接受亏损20%的风险去博取更高回报。", dim: "risk" },
+        { text: "即使所有人都说“别折腾了，安稳最重要”，我仍然想做点不一样的事情。", dim: "risk" },
+        { text: "当周围人都在犹豫观望时，我常常是第一个尝试新东西的人。", dim: "risk" },
+        { text: "我愿意用一部分闲置资金尝试高风险高回报的新兴领域（如加密货币、早期股权等）。", dim: "risk" }, // 新增
+        
+        // 社交影响力 (social) 原有4题 + 新增1题
+        { text: "我擅长用清晰有感染力的方式向别人介绍一个想法或计划。", dim: "social" },
+        { text: "我乐于参与行业活动、社交聚会，拓展自己的人脉圈。", dim: "social" },
+        { text: "谈判或讨价还价对我来说并不是难事。", dim: "social" },
+        { text: "我清楚自己的个人价值，敢于在商业场合主动要求应得的回报。", dim: "social" },
+        { text: "我能够快速与陌生人建立信任，并让对方记住我的优势。", dim: "social" }, // 新增
+        
+        // 商业思维 (business) 原有4题 + 新增1题
+        { text: "买东西时我会下意识计算卖方的成本和利润率。", dim: "business" },
+        { text: "我能把一个复杂项目拆解成可执行的步骤，并找到盈利点。", dim: "business" },
+        { text: "我经常思考如何把现有的技能或资源变成可持续的现金流。", dim: "business" },
+        { text: "比起一份稳定但天花板低的工作，我更在意一件事的长期商业价值。", dim: "business" },
+        { text: "我能快速判断一个商业模式是否健康，并指出其盈利关键节点。", dim: "business" }, // 新增
+        
+        // 韧性与执行力 (grit) 原有4题 + 新增1题
+        { text: "即使短期赚不到钱，我也愿意为了一个长期目标持续投入时间和精力。", dim: "grit" },
+        { text: "面对失败时，我更容易复盘反思，而不是长时间陷入沮丧。", dim: "grit" },
+        { text: "当事情进展不顺，我会迅速调整策略，而不是停留在原地纠结。", dim: "grit" },
+        { text: "我能在缺乏外部监督的情况下，自主推动自己的赚钱计划。", dim: "grit" },
+        { text: "即便遇到多次拒绝或挫折，我仍会坚持尝试直到找到可行方案。", dim: "grit" }, // 新增
+        
+        // 财富动机 (motive) 原有4题 + 新增1题
+        { text: "我相信普通人也能通过策略和努力积累财富，不觉得这是“命里注定”的事。", dim: "motive" },
+        { text: "我会主动学习理财知识或关注财经信息。", dim: "motive" },
+        { text: "我赚钱不只是为了消费，更是为了获得更多选择权和自由。", dim: "motive" },
+        { text: "当看到别人赚钱时，我的第一反应是“他是怎么做到的”，而不是嫉妒。", dim: "motive" },
+        { text: "我对实现财务自由有清晰的愿景和强烈的渴望。", dim: "motive" }  // 新增
+    ];
 
-        let currentQuestion = 0;
-        let answers = new Array(30).fill(null);
-        let isCompleted = false;      // 全局已完成标志
+    // 维度映射
+    const dimNames = {
+        risk: "风险嗅觉",
+        social: "社交影响力",
+        business: "商业思维",
+        grit: "韧性与执行力",
+        motive: "财富动机"
+    };
+    const dimOrder = ["risk", "social", "business", "grit", "motive"];
+    let radarChart = null;
+    // 存储锁定标志
+    const STORAGE_KEY = "moneyTalentDone";
+    const RESULT_KEY = "moneyTalentResult";
 
-        // DOM 元素
-        const coverDiv = document.getElementById('cover');
-        const questionnaireDiv = document.getElementById('questionnaire');
-        const loadingDiv = document.getElementById('loading');
-        const resultDiv = document.getElementById('result');
-        const startBtn = document.getElementById('startBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const shareBtn = document.getElementById('shareResultBtn');
+    // 检查是否已经完成测试 (单次锁定)
+    function isTestCompleted() {
+        return localStorage.getItem(STORAGE_KEY) === "true";
+    }
 
-        // ========== 辅助函数: 计算得分 & 生成结果对象 ==========
-        function computeResultFromAnswers(answerArray) {
-            const totalScore = answerArray.reduce((sum, ans) => sum + (ans + 1), 0);
-            let resultData = {};
-            if (totalScore >= 30 && totalScore <= 50) {
-                resultData = {
-                    type: "你是「老菌陈酿型」灵魂",
-                    status: "低度发酵，发酵温度恒定，菌群活性平缓，无多余气泡，质地醇厚",
-                    traits: "平时看着寡淡内敛，不争不抢，情绪毫无波澜，像久酿的米酒/老茶，越沉淀越有味道，耐得住寂寞，后劲极强",
-                    advice: "适合做陈年佳酿、团队定海神针、长期靠谱的守护者"
-                };
-            } else if (totalScore >= 51 && totalScore <= 70) {
-                resultData = {
-                    type: "你是「天然酵母型」灵魂",
-                    status: "中度正常发酵，菌群平衡，温度适宜，发酵过程平稳无差错，口感温润",
-                    traits: "情绪稳定，节奏舒适，不冒进不内耗，待人处事恰到好处，和任何人都能和谐相处，无明显短板",
-                    advice: "适合做日常主食、团队基础盘、身边的暖心陪伴者"
-                };
-            } else if (totalScore >= 71 && totalScore <= 95) {
-                resultData = {
-                    type: "你是「酵母菌型」灵魂",
-                    status: "高度活性发酵，遇糖分（机会/鼓励）瞬间膨胀，气泡疯狂滋生，爆发力拉满",
-                    traits: "平时看着温吞佛系，不起眼，一旦遇到机会、认可或热爱的事，就会瞬间爆发，潜力无限，行动力爆棚",
-                    advice: "适合做松软面包、团队核心、破局者与开拓者"
-                };
-            } else {
-                resultData = {
-                    type: "你是「醋酸菌型」灵魂",
-                    status: "过度发酵，菌群活性过强，温度偏高，易发酸冒泡，情绪浓度极高",
-                    traits: "细腻敏感，感知力超强，能捕捉细微情绪，容易emo内耗，像发酵过度的酸奶/果醋，酸涩但极具共情力",
-                    advice: "适合做创意创作者、情绪观察者、最懂他人的共情小天使"
-                };
-            }
-            const randomNum = Math.floor(1000 + Math.random() * 9000);
-            return { ...resultData, randomNumber: randomNum };
-        }
+    // 保存完成状态和报告数据（用于刷新后恢复）
+    function saveCompletion(answers, reportHTML, scores, totalScore, talentType, radarData) {
+        localStorage.setItem(STORAGE_KEY, "true");
+        // 存储必要数据以便重建报告
+        const data = {
+            reportHTML: reportHTML,
+            scores: scores,
+            totalScore: totalScore,
+            talentType: talentType,
+            radarData: radarData,
+            answers: answers  // 可选
+        };
+        localStorage.setItem(RESULT_KEY, JSON.stringify(data));
+    }
 
-        // 保存未完成进度 (答案 + 当前题号)
-        function saveUnfinishedProgress() {
-            localStorage.setItem(STORAGE_ANSWERS, JSON.stringify(answers));
-            localStorage.setItem(STORAGE_CURRENT_Q, currentQuestion);
-        }
-
-        // 清除未完成进度 (提交后或者重置时)
-        function clearUnfinishedProgress() {
-            localStorage.removeItem(STORAGE_ANSWERS);
-            localStorage.removeItem(STORAGE_CURRENT_Q);
-        }
-
-        // 保存完成状态 (结果 + 完成标志)
-        function saveCompletedState(resultData) {
-            localStorage.setItem(STORAGE_COMPLETED, 'true');
-            localStorage.setItem(STORAGE_RESULT, JSON.stringify(resultData));
-            clearUnfinishedProgress();  // 完成时删除未完成草稿
-        }
-
-        // 加载已完成的结果，并直接展示结果页面
-        function loadCompletedAndShow() {
-            const storedResult = localStorage.getItem(STORAGE_RESULT);
-            if (storedResult) {
-                const result = JSON.parse(storedResult);
-                displayResultOnPage(result);
-            } else {
-                // 极少数异常: 标志完成但无结果，重新生成默认
-                const fallback = { type: "灵魂发酵档案", status: "未知状态", traits: "请重新尝试", advice: "联系实验室", randomNumber: "9999" };
-                displayResultOnPage(fallback);
-            }
-            // 显示结果，隐藏其他
-            coverDiv.style.display = 'none';
-            questionnaireDiv.style.display = 'none';
-            loadingDiv.style.display = 'none';
-            resultDiv.style.display = 'block';
-            isCompleted = true;
-        }
-
-        // 渲染结果到页面
-        function displayResultOnPage(resultData) {
-            document.getElementById('resultType').textContent = resultData.type;
-            document.getElementById('resultStatus').innerHTML = `<strong>发酵状态：</strong>${resultData.status}`;
-            document.getElementById('resultTraits').innerHTML = `<strong>特质描述：</strong>${resultData.traits}`;
-            document.getElementById('resultAdvice').innerHTML = `<strong>适配定位：</strong>${resultData.advice}`;
-            document.getElementById('randomNumber').textContent = resultData.randomNumber;
-        }
-
-        // 提交最终结果 (动画 + 存储)
-        function submitFinalResult() {
-            if (isCompleted) return;
-            // 再次检查完整性
-            if (answers.some(a => a === null)) {
-                alert('请完成所有题目后再提交！');
-                return;
-            }
-            // 显示加载动画
-            questionnaireDiv.style.display = 'none';
-            loadingDiv.style.display = 'block';
-            
-            const loadingTexts = [
-                "正在连接银河系微生物数据库...",
-                "正在提取你的灵魂DNA样本...",
-                "正在询问你的专属守护星...",
-                "正在监测灵魂发酵温度...",
-                "正在筛查情绪菌群活性...",
-                "正在校准精神发酵刻度...",
-                "正在召唤发酵菌小精灵...",
-                "正在破解灵魂发酵密码..."
-            ];
-            let textIndex = 0;
-            const loadingInterval = setInterval(() => {
-                document.getElementById('loadingText').textContent = loadingTexts[textIndex];
-                textIndex = (textIndex + 1) % loadingTexts.length;
-            }, 2000);
-            
-            setTimeout(() => {
-                clearInterval(loadingInterval);
-                // 计算结果并存储
-                const finalResult = computeResultFromAnswers(answers);
-                saveCompletedState(finalResult);
-                isCompleted = true;
-                loadingDiv.style.display = 'none';
-                displayResultOnPage(finalResult);
-                resultDiv.style.display = 'block';
-            }, 5000);
-        }
-
-        // 恢复未完成进度 (从localStorage加载answers, currentQuestion)
-        function loadUnfinishedAndResume() {
-            const savedAnswers = localStorage.getItem(STORAGE_ANSWERS);
-            const savedQ = localStorage.getItem(STORAGE_CURRENT_Q);
-            if (savedAnswers) {
-                try {
-                    const parsed = JSON.parse(savedAnswers);
-                    if (Array.isArray(parsed) && parsed.length === 30) {
-                        answers = parsed;
+    // 从存储恢复报告 (刷新后直接显示结果，阻止重新测试)
+    function restoreReport() {
+        const saved = localStorage.getItem(RESULT_KEY);
+        if (saved && isTestCompleted()) {
+            try {
+                const data = JSON.parse(saved);
+                // 显示报告区域
+                document.getElementById("resultArea").style.display = "block";
+                document.getElementById("resultArea").innerHTML = data.reportHTML;
+                // 禁用测试区所有交互
+                disableTestInterface(true);
+                // 重新绘制雷达图 (因为canvas在恢复的html中)
+                setTimeout(() => {
+                    const ctx = document.getElementById('radarCanvas')?.getContext('2d');
+                    if (ctx && data.radarData) {
+                        if (radarChart) radarChart.destroy();
+                        radarChart = new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: dimOrder.map(d => dimNames[d]),
+                                datasets: [{
+                                    label: '你的维度分数',
+                                    data: data.radarData,
+                                    backgroundColor: 'rgba(44, 110, 111, 0.2)',
+                                    borderColor: '#2c6e6f',
+                                    borderWidth: 2,
+                                    pointBackgroundColor: '#2c6e6f',
+                                    pointBorderColor: '#fff',
+                                    pointRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                scales: { r: { beginAtZero: true, max: 25, ticks: { stepSize: 5, backdropColor: 'transparent' } } },
+                                plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}分` } }, legend: { position: 'bottom' } }
+                            }
+                        });
                     }
-                } catch(e) {}
-            }
-            if (savedQ !== null && !isNaN(parseInt(savedQ))) {
-                currentQuestion = parseInt(savedQ);
-                if (currentQuestion < 0) currentQuestion = 0;
-                if (currentQuestion >= 30) currentQuestion = 29;
-            }
-            // 重新渲染DOM并高亮选中项
-            renderQuestionsWithSelections();
-            // 显示问卷区域，隐藏封面和结果
-            coverDiv.style.display = 'none';
-            questionnaireDiv.style.display = 'block';
-            resultDiv.style.display = 'none';
-            loadingDiv.style.display = 'none';
-            // 激活当前问题
-            document.querySelectorAll('.question').forEach((q, idx) => {
-                if (idx === currentQuestion) q.classList.add('active');
-                else q.classList.remove('active');
-            });
-            updateProgress();
-            updateNavButtons();
+                    // 重新绑定报告内的任何按钮（没有重测按钮，只会有可能的消息）
+                }, 50);
+                return true;
+            } catch(e) { console.warn(e); }
         }
+        return false;
+    }
 
-        // 渲染所有题目，并根据answers恢复选中样式
-        function renderQuestionsWithSelections() {
-            const container = document.getElementById('questionsContainer');
-            container.innerHTML = '';
-            for (let i = 0; i < questions.length; i++) {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.id = `question-${i}`;
-                questionDiv.innerHTML = `
-                    <h3>${i + 1}. ${questions[i]}</h3>
-                    <div class="options">
-                        <div class="option" data-question="${i}" data-option="0">A. ${options[i][0]}</div>
-                        <div class="option" data-question="${i}" data-option="1">B. ${options[i][1]}</div>
-                        <div class="option" data-question="${i}" data-option="2">C. ${options[i][2]}</div>
-                        <div class="option" data-question="${i}" data-option="3">D. ${options[i][3]}</div>
-                    </div>
-                `;
-                container.appendChild(questionDiv);
+    // 禁用测试界面 (单次锁定后不能再作答)
+    function disableTestInterface(disabled) {
+        const form = document.getElementById("quizForm");
+        const submitBtn = document.getElementById("submitBtn");
+        if (disabled) {
+            // 禁用所有radio
+            const allRadios = document.querySelectorAll('#quizForm input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = true);
+            // 隐藏提交按钮或禁用
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "✅ 已完成测评 (不可重测)";
+                submitBtn.style.opacity = "0.6";
             }
-            // 重新绑定选项事件，并恢复已选样式
-            const allOptions = document.querySelectorAll('.option');
-            allOptions.forEach(opt => {
-                const qIdx = parseInt(opt.getAttribute('data-question'));
-                const optIdx = parseInt(opt.getAttribute('data-option'));
-                if (answers[qIdx] === optIdx) {
-                    opt.classList.add('selected');
-                }
-                opt.addEventListener('click', (e) => {
-                    if (isCompleted) return;
-                    const qIndex = parseInt(opt.getAttribute('data-question'));
-                    const oIndex = parseInt(opt.getAttribute('data-option'));
-                    selectOptionHandler(qIndex, oIndex);
-                });
-            });
+            // 添加锁定提示卡片
+            const lockMsg = document.createElement('div');
+            lockMsg.className = "lock-message";
+            lockMsg.innerHTML = "🔒 您已完成本次搞钱天赋测评，每人仅限一次。如需再次探索，请使用其他设备或清除浏览器数据（不推荐）。";
+            const testArea = document.getElementById("testArea");
+            if (!testArea.querySelector('.lock-message')) {
+                testArea.insertBefore(lockMsg, testArea.firstChild);
+            }
+        } else {
+            // 启用状态（初始）
+            const allRadios = document.querySelectorAll('#quizForm input[type="radio"]');
+            allRadios.forEach(radio => radio.disabled = false);
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "✨ 生成我的搞钱报告";
+                submitBtn.style.opacity = "1";
+            }
+            const existingLock = testArea.querySelector('.lock-message');
+            if (existingLock) existingLock.remove();
         }
+    }
 
-        // 处理选项点击
-        function selectOptionHandler(questionIndex, optionIndex) {
-            if (isCompleted) return;
-            answers[questionIndex] = optionIndex;
-            // 更新UI选中样式
-            const questionEl = document.getElementById(`question-${questionIndex}`);
-            const opts = questionEl.querySelectorAll('.option');
-            opts.forEach(opt => {
-                const val = parseInt(opt.getAttribute('data-option'));
-                if (val === optionIndex) opt.classList.add('selected');
-                else opt.classList.remove('selected');
-            });
-            updateProgress();
-            updateNavButtons();
-            // 保存进度
-            saveUnfinishedProgress();
-        }
-
-        function updateProgress() {
-            const answeredCount = answers.filter(a => a !== null).length;
-            const percent = (answeredCount / 30) * 100;
-            document.getElementById('progressFill').style.width = `${percent}%`;
-        }
-
-        function updateNavButtons() {
-            if (isCompleted) return;
-            const prev = document.getElementById('prevBtn');
-            const next = document.getElementById('nextBtn');
-            prev.disabled = (currentQuestion === 0);
-            next.textContent = (currentQuestion === 29) ? '提交测试' : '下一题';
-            if (answers[currentQuestion] === null) {
-                next.disabled = true;
-            } else {
-                next.disabled = false;
-            }
-        }
-
-        function nextQuestion() {
-            if (isCompleted) return;
-            if (currentQuestion < 29) {
-                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
-                currentQuestion++;
-                document.getElementById(`question-${currentQuestion}`).classList.add('active');
-                updateNavButtons();
-                saveUnfinishedProgress();  // 移动后保存当前进度
-            } else {
-                // 提交
-                submitFinalResult();
-            }
-        }
-
-        function prevQuestion() {
-            if (isCompleted) return;
-            if (currentQuestion > 0) {
-                document.getElementById(`question-${currentQuestion}`).classList.remove('active');
-                currentQuestion--;
-                document.getElementById(`question-${currentQuestion}`).classList.add('active');
-                updateNavButtons();
-                saveUnfinishedProgress();
-            }
-        }
-
-        // 全新开始测试 (清除所有旧存储，开始新问卷) — 仅用于未完成状态下的重置
-        function freshStartTest() {
-            if (isCompleted) {
-                alert("你已经完成过灵魂发酵检测，无法再次测试。\n每颗灵魂只能发酵一次✨");
-                return;
-            }
-            // 清空之前所有进度
-            localStorage.removeItem(STORAGE_ANSWERS);
-            localStorage.removeItem(STORAGE_CURRENT_Q);
-            localStorage.removeItem(STORAGE_COMPLETED);
-            localStorage.removeItem(STORAGE_RESULT);
-            answers = new Array(30).fill(null);
-            currentQuestion = 0;
-            isCompleted = false;
-            // 重新渲染干净问卷
-            renderQuestionsWithSelections();
-            coverDiv.style.display = 'none';
-            questionnaireDiv.style.display = 'block';
-            resultDiv.style.display = 'none';
-            loadingDiv.style.display = 'none';
-            document.querySelectorAll('.question').forEach((q, idx) => {
-                if (idx === 0) q.classList.add('active');
-                else q.classList.remove('active');
-            });
-            updateProgress();
-            updateNavButtons();
-            saveUnfinishedProgress();
-        }
-
-        // 分享功能（替代再来一次）
-        function shareDiagnosis() {
-            const typeText = document.getElementById('resultType')?.innerText || "灵魂发酵档案";
-            const statusText = document.getElementById('resultStatus')?.innerText || "";
-            const traitsText = document.getElementById('resultTraits')?.innerText || "";
-            const shareContent = `【灵魂发酵实验室】我的发酵诊断书：${typeText}\n${statusText}\n${traitsText}\n—— 灵魂只能发酵一次，独一无二。`;
-            if (navigator.share) {
-                navigator.share({ title: '灵魂发酵诊断书', text: shareContent }).catch(() => alert("分享取消"));
-            } else {
-                navigator.clipboard.writeText(shareContent).then(() => alert("诊断书已复制，快分享给朋友吧~"));
-            }
-        }
-
-        // 初始化页面逻辑 (判断已完成 / 未完成)
-        function initApp() {
-            const completedFlag = localStorage.getItem(STORAGE_COMPLETED) === 'true';
-            if (completedFlag) {
-                // 已经完成测试 → 直接显示结果
-                isCompleted = true;
-                loadCompletedAndShow();
-                return;
-            }
-            // 未完成 → 检查是否存在未完成答案草稿
-            const savedAnswers = localStorage.getItem(STORAGE_ANSWERS);
-            if (savedAnswers) {
-                // 有未完成记录，直接恢复进度并展示问卷 (跳过封面)
-                loadUnfinishedAndResume();
-            } else {
-                // 无任何记录，显示封面，等待用户开始
-                coverDiv.style.display = 'block';
-                questionnaireDiv.style.display = 'none';
-                loadingDiv.style.display = 'none';
-                resultDiv.style.display = 'none';
-                isCompleted = false;
-                answers = new Array(30).fill(null);
-                currentQuestion = 0;
-                // 预先生成干净DOM但不显示
-                renderQuestionsWithSelections();
-            }
-        }
-
-        // 事件绑定
-        startBtn.addEventListener('click', () => {
-            // 如果已经完成，不能开始
-            if (localStorage.getItem(STORAGE_COMPLETED) === 'true') {
-                alert("您已完成灵魂发酵检测，无法再次测试。\n每份灵魂诊断都是唯一的。");
-                return;
-            }
-            // 如果有未完成进度则继续；否则全新开始
-            const hasUnfinished = localStorage.getItem(STORAGE_ANSWERS) !== null;
-            if (hasUnfinished) {
-                loadUnfinishedAndResume();
-            } else {
-                freshStartTest();
-            }
+    // 渲染所有题目
+    function renderQuestions() {
+        const form = document.getElementById("quizForm");
+        form.innerHTML = "";
+        questions.forEach((q, idx) => {
+            const qDiv = document.createElement("div");
+            qDiv.className = "question-item";
+            qDiv.innerHTML = `
+                <div class="q-text">
+                    <span class="q-num">${idx+1}</span> ${q.text}
+                </div>
+                <div class="rating-group" data-qidx="${idx}">
+                    ${[1,2,3,4,5].map(val => `
+                        <div class="rating-option">
+                            <input type="radio" name="q${idx}" id="q${idx}_${val}" value="${val}">
+                            <label for="q${idx}_${val}">${val}</label>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            form.appendChild(qDiv);
         });
+    }
 
-        prevBtn.addEventListener('click', prevQuestion);
-        nextBtn.addEventListener('click', nextQuestion);
-        shareBtn.addEventListener('click', shareDiagnosis);
+    // 检查是否全部作答
+    function checkAllAnswered() {
+        for (let i = 0; i < questions.length; i++) {
+            const radios = document.querySelectorAll(`input[name="q${i}"]`);
+            const checked = Array.from(radios).some(r => r.checked);
+            if (!checked) {
+                alert(`请先完成第 ${i+1} 题再查看报告 🙏`);
+                const target = document.querySelector(`.question-item:nth-child(${i+1})`);
+                if(target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+                return false;
+            }
+        }
+        return true;
+    }
 
-        // 启动
-        initApp();
-    </script>
+    // 获取各维度分数 (每个维度5题，总分范围5-25)
+    function getDimensionScores() {
+        const scores = { risk: 0, social: 0, business: 0, grit: 0, motive: 0 };
+        for (let i = 0; i < questions.length; i++) {
+            const radios = document.querySelectorAll(`input[name="q${i}"]`);
+            let selectedVal = null;
+            for (let r of radios) {
+                if (r.checked) {
+                    selectedVal = parseInt(r.value);
+                    break;
+                }
+            }
+            if (selectedVal !== null) {
+                const dim = questions[i].dim;
+                scores[dim] += selectedVal;
+            }
+        }
+        return scores;
+    }
+
+    // 判定天赋类型 (基于5题维度分 5-25，调整阈值比例与原20分制一致：原14/20=0.7 → 17.5/25 → 取18为高；原11/20=0.55 → 13.75/25 → 取≤13为低)
+    function determineTalentType(scores) {
+        const r = scores.risk;
+        const s = scores.social;
+        const b = scores.business;
+        const g = scores.grit;
+        const m = scores.motive;
+        
+        const high = (val) => val >= 18;
+        const mediumLow = (val) => val <= 13;
+        
+        // 开拓者: 高风险 + 低社交 (风险>=18 且 社交<=13)
+        if (r >= 18 && s <= 13 && (r - s) >= 4) return "开拓者";
+        // 连接者: 高社交 + 风险中等或偏低
+        if (s >= 18 && r <= 17) return "连接者";
+        // 操盘手: 高商业 + 高执行力
+        if (b >= 18 && g >= 18) return "操盘手";
+        // 猎人: 高动机 + 高风险
+        if (m >= 18 && r >= 17) return "猎人";
+        // 坚守者: 高韧性 + 风险中等偏低
+        if (g >= 18 && r <= 16) return "坚守者";
+        
+        // 后备规则: 最高维度决定
+        const dimVal = { risk: r, social: s, business: b, grit: g, motive: m };
+        let maxDim = "risk";
+        let maxVal = r;
+        for (let [k, v] of Object.entries(dimVal)) {
+            if (v > maxVal) { maxVal = v; maxDim = k; }
+        }
+        if (maxDim === "risk") return "开拓者";
+        if (maxDim === "social") return "连接者";
+        if (maxDim === "business") return "操盘手";
+        if (maxDim === "grit") return "坚守者";
+        if (maxDim === "motive") return "猎人";
+        return "开拓者";
+    }
+
+    // 获取报告细节
+    function getTalentDetails(type, scores, totalScore) {
+        const detailsMap = {
+            "开拓者": {
+                slogan: "🚀 先机捕手 · 敢为人先",
+                strengths: "创新敏锐，敢于试错，对新机会嗅觉灵敏。能在别人看不见的地方发现价值，是‘第一个吃螃蟹的人’。",
+                directions: "投资分析、新兴行业创业、产品创新、早期项目参与、趋势套利。",
+                actions: "✅ 用小成本试错，建立最小可行性产品验证想法。✅ 结交务实型伙伴，弥补落地短板。✅ 关注前沿资讯，保持信息差优势。",
+                pitfalls: "⚠️ 警惕过于乐观导致盲目投入。⚠️ 避免忽视风险管控，建议设置止损线。"
+            },
+            "连接者": {
+                slogan: "🤝 资源枢纽 · 人脉变现",
+                strengths: "人脉广、善沟通，能从人际关系中创造商业价值。能把不同资源和人群连接起来，是‘破圈高手’。",
+                directions: "销售、商务拓展、社群运营、品牌合作、知识付费、中介服务。",
+                actions: "✅ 系统化经营人脉，定期维护弱关系。✅ 打造个人品牌，让信任为你背书。✅ 学会合作分成，放大杠杆。",
+                pitfalls: "⚠️ 避免无效社交，要注重价值互换。⚠️ 别因顾及人情而忽略商业条款。"
+            },
+            "操盘手": {
+                slogan: "📐 商业架构师 · 稳赚玩家",
+                strengths: "逻辑缜密，擅长商业拆解，能把想法落地为盈利项目。天生会算账，将点子变成高效流水线。",
+                directions: "项目运营、电商操盘、内容变现策划、供应链管理、数据分析变现。",
+                actions: "✅ 把成功经验SOP化，建立可复用的系统。✅ 学习财务模型，提升ROI思维。✅ 用数据驱动决策。",
+                pitfalls: "⚠️ 避免陷入过度分析而错过窗口期。⚠️ 注意团队沟通，不要只做孤狼。"
+            },
+            "坚守者": {
+                slogan: "⛰️ 长期主义 · 厚积薄发",
+                strengths: "耐得住寂寞，执行力强，对目标有持续投入的意志力。马拉松型选手，能在别人放弃的地方坚持。",
+                directions: "长期投资、深耕型创业、专业技术变现、副业沉淀、知识IP。",
+                actions: "✅ 定期复盘大方向，避免战术勤奋。✅ 建立里程碑奖励机制保持动力。✅ 培养输出习惯，积累复利。",
+                pitfalls: "⚠️ 警惕因过于保守错过灵活风口。⚠️ 学会适时宣传自己，别让才华沉默。"
+            },
+            "猎人": {
+                slogan: "⚡ 机会捕捉者 · 爆发冲刺",
+                strengths: "动机强烈，对财富有清晰欲望，行动力爆发式。锁定目标就全力冲刺，短期变现能力强。",
+                directions: "短期风口项目、高佣金岗位、快节奏电商、直播带货、流量变现。",
+                actions: "✅ 做好风控和情绪管理，避免孤注一掷。✅ 建立信息收集网，快速试错迭代。✅ 留出安全资金垫。",
+                pitfalls: "⚠️ 防止急功近利掉入骗局。⚠️ 注重长期积累，避免永远追风口。"
+            }
+        };
+        const base = detailsMap[type];
+        // 排序维度
+        const dimArray = dimOrder.map(d => ({ name: dimNames[d], score: scores[d] }));
+        dimArray.sort((a,b) => b.score - a.score);
+        const top1 = dimArray[0];
+        const top2 = dimArray[1];
+        const top3 = dimArray[2];
+        const growth = dimArray[dimArray.length-1];
+        return { ...base, top1, top2, top3, growth, totalScore, type };
+    }
+
+    function getDimensionDesc(dimName, score) {
+        const percent = (score/25)*100;
+        if(percent >= 70) return "天赋突出，善于运用这一优势创造价值";
+        if(percent >= 50) return "基础扎实，继续打磨能成为杀手锏";
+        return "有成长空间，刻意练习后可大幅提升搞钱效率";
+    }
+    function getGrowthAdvice(dimName) {
+        const map = {
+            "风险嗅觉": "尝试小成本新项目，培养机会敏感度。",
+            "社交影响力": "每周主动链接一位新朋友，练习表达观点。",
+            "商业思维": "拆解一个成功案例的盈利模型，训练算账能力。",
+            "韧性与执行力": "设定微小习惯，先完成再完美。",
+            "财富动机": "阅读一本财富心理书籍，明确具体财务目标。"
+        };
+        return map[dimName] || "持续学习，结合优势发力。";
+    }
+    function getOneLiner(type) {
+        const map = {
+            "开拓者": "你的冒险精神是财富的探照灯，去照亮未知的领域吧。",
+            "连接者": "世界是由关系编织的，你的纽带就是价值。",
+            "操盘手": "把一切变成系统，财富自然高效流转。",
+            "坚守者": "时间是你最好的朋友，复利终将厚待长期主义者。",
+            "猎人": "机会从不等待犹豫者，保持精准出击的锐气。"
+        };
+        return map[type];
+    }
+
+    // 生成报告并锁定
+    function generateAndLock() {
+        if (isTestCompleted()) {
+            alert("您已经完成过测评，无法再次测试。刷新页面可查看您的报告。");
+            return false;
+        }
+        if (!checkAllAnswered()) return false;
+        
+        const scores = getDimensionScores();
+        const totalScore = Object.values(scores).reduce((a,b)=>a+b,0);
+        const talent = determineTalentType(scores);
+        const details = getTalentDetails(talent, scores, totalScore);
+        const radarData = dimOrder.map(d => scores[d]);
+        
+        // 构建报告HTML
+        const reportHtml = `
+            <div class="report-card" id="reportContainer">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+                    <span class="dimension-tag">🧪 心理测评报告 · 单次有效</span>
+                    <span class="score-badge">总分 ${totalScore}/125</span>
+                </div>
+                <div class="talent-title">${details.type} · ${details.slogan}</div>
+                <div style="margin: 8px 0 4px; color: #2d6a6b;"><strong>核心摘要</strong></div>
+                <p>你的搞钱天赋为「${details.type}」，在「${details.top1.name}」维度表现最突出（${details.top1.score}/25）。整体得分结构中，优势明显，呈现出独特的搞钱基因。</p>
+                
+                <div class="radar-container">
+                    <canvas id="radarCanvas" width="300" height="300" style="width:100%; height:auto; max-width:280px; margin:0 auto; display:block;"></canvas>
+                </div>
+                
+                <div class="insight-box">
+                    <div style="font-weight: 700; margin-bottom: 12px;">📊 你的搞钱优势图谱</div>
+                    <div>🎯 最强天赋：${details.top1.name} —— ${getDimensionDesc(details.top1.name, details.top1.score)}</div>
+                    <div>⚡ 第二优势：${details.top2.name} —— ${getDimensionDesc(details.top2.name, details.top2.score)}</div>
+                    <div>📈 第三维度：${details.top3.name} —— ${getDimensionDesc(details.top3.name, details.top3.score)}</div>
+                    <div>🧩 成长空间：${details.growth.name} —— ${getGrowthAdvice(details.growth.name)}</div>
+                </div>
+                
+                <div><span style="font-weight: 700;">✨ 适合你的搞钱方向</span><br>${details.directions}</div>
+                <hr>
+                <div><span style="font-weight: 700;">🎯 给你的行动锦囊</span><br>${details.actions}</div>
+                <hr>
+                <div><span style="font-weight: 700;">⚠️ 需要留意的坑</span><br>${details.pitfalls}</div>
+                <hr>
+                <div style="background: #f2f7f2; padding: 12px; border-radius: 20px; text-align: center; font-style: italic;">
+                    💬 一句话总结：${getOneLiner(details.type)}
+                </div>
+                <div style="margin-top: 20px; text-align: center; font-size: 0.8rem; color: #7c8b9f;">
+                    🔒 本测评仅限一次，刷新页面可查看本报告
+                </div>
+            </div>
+        `;
+        
+        // 保存当前答案（用于存储，可选）
+        const answers = {};
+        for (let i = 0; i < questions.length; i++) {
+            const radios = document.querySelectorAll(`input[name="q${i}"]`);
+            for (let r of radios) {
+                if (r.checked) { answers[i] = r.value; break; }
+            }
+        }
+        
+        saveCompletion(answers, reportHtml, scores, totalScore, talent, radarData);
+        
+        // 显示报告区
+        document.getElementById("resultArea").style.display = "block";
+        document.getElementById("resultArea").innerHTML = reportHtml;
+        // 禁用测试界面
+        disableTestInterface(true);
+        
+        // 绘制雷达图
+        setTimeout(() => {
+            const ctx = document.getElementById('radarCanvas')?.getContext('2d');
+            if (ctx) {
+                if (radarChart) radarChart.destroy();
+                radarChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: dimOrder.map(d => dimNames[d]),
+                        datasets: [{
+                            label: '你的维度分数',
+                            data: radarData,
+                            backgroundColor: 'rgba(44, 110, 111, 0.2)',
+                            borderColor: '#2c6e6f',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#2c6e6f',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: { r: { beginAtZero: true, max: 25, ticks: { stepSize: 5, backdropColor: 'transparent' } } },
+                        plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}分` } }, legend: { position: 'bottom' } }
+                    }
+                });
+            }
+        }, 30);
+        
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return true;
+    }
+
+    // 初始化：检查是否已完成，若完成则恢复报告并禁用测试；否则正常渲染
+    function init() {
+        renderQuestions();
+        if (isTestCompleted()) {
+            const restored = restoreReport();
+            if (restored) {
+                disableTestInterface(true);
+                return;
+            } else {
+                // 如果恢复失败（数据损坏），清除标记让用户重测
+                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(RESULT_KEY);
+                disableTestInterface(false);
+            }
+        } else {
+            disableTestInterface(false);
+        }
+        // 绑定提交按钮
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.onclick = (e) => {
+            e.preventDefault();
+            generateAndLock();
+        };
+    }
+
+    init();
+</script>
 </body>
 </html>
